@@ -113,6 +113,19 @@ public class FileBackend {
 		return false;
 	}
 
+	private static boolean isInDirectoryThatShouldNotBeScanned(Context context, File file) {
+		return isInDirectoryThatShouldNotBeScanned(context, file.getAbsolutePath());
+	}
+
+	public static boolean isInDirectoryThatShouldNotBeScanned(Context context, String path) {
+		for(String type : new String[]{RecordingActivity.STORAGE_DIRECTORY_TYPE_NAME, "Files"}) {
+			if (path.startsWith(getConversationsDirectory(context, type))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public boolean deleteFile(Message message) {
 		File file = getFile(message);
 		if (file.delete()) {
