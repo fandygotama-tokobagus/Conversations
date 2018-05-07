@@ -428,6 +428,8 @@
   <string name="none">Nimic</string>
   <string name="recently_used">Folosită recent</string>
   <string name="choose_quick_action">Alegeți acțiunea rapidă</string>
+  <string name="search_contacts">Caută contacte</string>
+  <string name="search_groups">Caută discuții de grup</string>
   <string name="send_private_message">trimite mesaj privat</string>
   <string name="user_has_left_conference">%1$s a părăsit discuția de grup!</string>
   <string name="username">Nume utilizator</string>
@@ -711,4 +713,9 @@ sau chiar pierderea mesajelor.\nÎn continuare veți fi rugați să dezactivați
   <string name="unable_to_start_recording">Nu s-a putut porni înregistrarea</string>
   <string name="please_wait">Vă rugăm să așteptați...</string>
   <string name="no_microphone_permission">Conversations are nevoie de acces la microfon</string>
+  <string name="search_messages">Caută mesaje</string>
+  <string name="gif">GIF</string>
+  <string name="view_conversation">Arată conversația</string>
+  <string name="pref_use_share_location_plugin">Extensia Share Location</string>
+  <string name="pref_use_share_location_plugin_summary">Folosește localizarea cu extensia în locul hărții incluse</string>
 </resources>

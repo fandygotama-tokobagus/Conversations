@@ -50,6 +50,7 @@ import eu.siacs.conversations.entities.Roster;
 import eu.siacs.conversations.entities.ServiceDiscoveryResult;
 import eu.siacs.conversations.services.ShortcutService;
 import eu.siacs.conversations.utils.CryptoHelper;
+import eu.siacs.conversations.utils.FtsUtils;
 import eu.siacs.conversations.utils.MimeUtils;
 import eu.siacs.conversations.utils.Resolver;
 import eu.siacs.conversations.xmpp.mam.MamReference;
@@ -60,7 +61,7 @@ public class DatabaseBackend extends SQLiteOpenHelper {
 	private static DatabaseBackend instance = null;
 
 	private static final String DATABASE_NAME = "history";
-	private static final int DATABASE_VERSION = 40;
+	private static final int DATABASE_VERSION = 41;
 
 	private static String CREATE_CONTATCS_STATEMENT = "create table "
 			+ Contact.TABLENAME + "(" + Contact.ACCOUNT + " TEXT, "
@@ -163,6 +164,12 @@ public class DatabaseBackend extends SQLiteOpenHelper {
 	private static String CREATE_MESSAGE_TIME_INDEX = "create INDEX message_time_index ON "+Message.TABLENAME+"("+Message.TIME_SENT+")";
 	private static String CREATE_MESSAGE_CONVERSATION_INDEX = "create INDEX message_conversation_index ON "+Message.TABLENAME+"("+Message.CONVERSATION+")";
 
+	private static String CREATE_MESSAGE_INDEX_TABLE = "CREATE VIRTUAL TABLE messages_index USING FTS4(uuid, body)";
+	private static String CREATE_MESSAGE_INSERT_TRIGGER = "CREATE TRIGGER after_message_insert AFTER INSERT ON "+Message.TABLENAME+ " BEGIN INSERT INTO messages_index (uuid,body) VALUES (new.uuid,new.body); END;";
+	private static String CREATE_MESSAGE_UPDATE_TRIGGER = "CREATE TRIGGER after_message_update UPDATE of uuid,body ON "+Message.TABLENAME+" BEGIN update messages_index set body=new.body,uuid=new.uuid WHERE uuid=old.uuid; END;";
+	private static String CREATE_MESSAGE_DELETE_TRIGGER = "CREATE TRIGGER after_message_delete AFTER DELETE ON "+Message.TABLENAME+ " BEGIN DELETE from messages_index where uuid=old.uuid; END;";
+	private static String COPY_PREEXISTING_ENTRIES = "INSERT into messages_index(uuid,body) select uuid,body FROM "+Message.TABLENAME+";";
+
 	private DatabaseBackend(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
@@ -223,6 +230,10 @@ public class DatabaseBackend extends SQLiteOpenHelper {
 		db.execSQL(CREATE_IDENTITIES_STATEMENT);
 		db.execSQL(CREATE_PRESENCE_TEMPLATES_STATEMENT);
 		db.execSQL(CREATE_RESOLVER_RESULTS_TABLE);
+		db.execSQL(CREATE_MESSAGE_INDEX_TABLE);
+		db.execSQL(CREATE_MESSAGE_INSERT_TRIGGER);
+		db.execSQL(CREATE_MESSAGE_UPDATE_TRIGGER);
+		db.execSQL(CREATE_MESSAGE_DELETE_TRIGGER);
 	}
 
 	@Override
@@ -478,6 +489,14 @@ public class DatabaseBackend extends SQLiteOpenHelper {
 		if (oldVersion < 39 && newVersion >= 39) {
 			db.execSQL(CREATE_RESOLVER_RESULTS_TABLE);
 		}
+
+		if (oldVersion < 41 && newVersion >= 41) {
+			db.execSQL(CREATE_MESSAGE_INDEX_TABLE);
+			db.execSQL(CREATE_MESSAGE_INSERT_TRIGGER);
+			db.execSQL(CREATE_MESSAGE_UPDATE_TRIGGER);
+			db.execSQL(CREATE_MESSAGE_DELETE_TRIGGER);
+			db.execSQL(COPY_PREEXISTING_ENTRIES);
+		}
 	}
 
 	private static ContentValues createFingerprintStatusContentValues(FingerprintStatus.Trust trust, boolean active) {
@@ -704,10 +723,11 @@ public class DatabaseBackend extends SQLiteOpenHelper {
 		return list;
 	}
 
-	public Cursor getMessageSearchCursor(String term) {
+	public Cursor getMessageSearchCursor(List<String> term) {
 		SQLiteDatabase db = this.getReadableDatabase();
-		String SQL = "SELECT "+Message.TABLENAME+".*,"+Conversation.TABLENAME+'.'+Conversation.CONTACTJID+','+Conversation.TABLENAME+'.'+Conversation.ACCOUNT+','+Conversation.TABLENAME+'.'+Conversation.MODE+" FROM "+Message.TABLENAME +" join "+Conversation.TABLENAME+" on "+Message.TABLENAME+'.'+Message.CONVERSATION+'='+Conversation.TABLENAME+'.'+Conversation.UUID+" where "+Message.ENCRYPTION+" NOT IN("+Message.ENCRYPTION_AXOLOTL_NOT_FOR_THIS_DEVICE+','+Message.ENCRYPTION_PGP+','+Message.ENCRYPTION_DECRYPTION_FAILED+") AND "+Message.BODY +" LIKE ? ORDER BY "+Message.TIME_SENT+" DESC limit "+Config.MAX_SEARCH_RESULTS;
-		return db.rawQuery(SQL,new String[]{'%'+term+'%'});
+		String SQL = "SELECT "+Message.TABLENAME+".*,"+Conversation.TABLENAME+'.'+Conversation.CONTACTJID+','+Conversation.TABLENAME+'.'+Conversation.ACCOUNT+','+Conversation.TABLENAME+'.'+Conversation.MODE+" FROM "+Message.TABLENAME +" join "+Conversation.TABLENAME+" on "+Message.TABLENAME+'.'+Message.CONVERSATION+'='+Conversation.TABLENAME+'.'+Conversation.UUID+" join messages_index ON messages_index.uuid=messages.uuid where "+Message.ENCRYPTION+" NOT IN("+Message.ENCRYPTION_AXOLOTL_NOT_FOR_THIS_DEVICE+','+Message.ENCRYPTION_PGP+','+Message.ENCRYPTION_DECRYPTION_FAILED+") AND "+Message.TYPE+" IN("+Message.TYPE_TEXT+','+Message.TYPE_PRIVATE+") AND messages_index.body MATCH ? ORDER BY "+Message.TIME_SENT+" DESC limit "+Config.MAX_SEARCH_RESULTS;
+		Log.d(Config.LOGTAG,"search term: "+FtsUtils.toMatchString(term));
+		return db.rawQuery(SQL,new String[]{FtsUtils.toMatchString(term)});
 	}
 
 	public Iterable<Message> getMessagesIterable(final Conversation conversation) {

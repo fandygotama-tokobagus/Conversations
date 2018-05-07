@@ -34,7 +34,6 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -93,11 +92,8 @@ public class MessageAdapter extends ArrayAdapter<Message> implements CopyTextVie
 	private static final int RECEIVED = 1;
 	private static final int STATUS = 2;
 	private static final int DATE_SEPARATOR = 3;
-	private static final Pattern XMPP_PATTERN = Pattern
-			.compile("xmpp\\:(?:(?:["
-					+ Patterns.GOOD_IRI_CHAR
-					+ "\\;\\/\\?\\@\\&\\=\\#\\~\\-\\.\\+\\!\\*\\'\\(\\)\\,\\_])"
-					+ "|(?:\\%[a-fA-F0-9]{2}))+");
+
+	private List<String> highlightedTerm = null;
 
 	private static final Linkify.TransformFilter WEBURL_TRANSFORM_FILTER = (matcher, url) -> {
 		if (url == null) {
@@ -364,7 +360,7 @@ public class MessageAdapter extends ArrayAdapter<Message> implements CopyTextVie
 		}
 	}
 
-	private void displayInfoMessage(ViewHolder viewHolder, String text, boolean darkBackground) {
+	private void displayInfoMessage(ViewHolder viewHolder, CharSequence text, boolean darkBackground) {
 		viewHolder.download_button.setVisibility(View.GONE);
 		viewHolder.audioPlayer.setVisibility(View.GONE);
 		viewHolder.image.setVisibility(View.GONE);
@@ -405,7 +401,7 @@ public class MessageAdapter extends ArrayAdapter<Message> implements CopyTextVie
 			body.setSpan(new DividerSpan(false), end, end + 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		}
 		int color = darkBackground ? this.getMessageTextColor(darkBackground, false)
-				: ContextCompat.getColor(activity, R.color.bubble);
+				: ContextCompat.getColor(activity, R.color.green700_desaturated);
 		DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
 		body.setSpan(new QuoteSpan(color, metrics), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		return 0;
@@ -548,8 +544,11 @@ public class MessageAdapter extends ArrayAdapter<Message> implements CopyTextVie
 			}
 
 			StylingHelper.format(body, viewHolder.messageBody.getCurrentTextColor());
+			if (highlightedTerm != null) {
+				StylingHelper.highlight(activity, body, highlightedTerm, StylingHelper.isDarkText(viewHolder.messageBody));
+			}
 
-			Linkify.addLinks(body, XMPP_PATTERN, "xmpp", XMPPURI_MATCH_FILTER, null);
+			Linkify.addLinks(body, Patterns.XMPP_PATTERN, "xmpp", XMPPURI_MATCH_FILTER, null);
 			Linkify.addLinks(body, Patterns.AUTOLINK_WEB_URL, "http", WEBURL_MATCH_FILTER, WEBURL_TRANSFORM_FILTER);
 			Linkify.addLinks(body, GeoHelper.GEO_URI, "geo");
 			FixedURLSpan.fix(body);
@@ -786,9 +785,7 @@ public class MessageAdapter extends ArrayAdapter<Message> implements CopyTextVie
 			} else {
 				displayInfoMessage(viewHolder, UIHelper.getMessagePreview(activity, message).first, darkBackground);
 			}
-		} else if (message.getType() == Message.TYPE_IMAGE && message.getEncryption() != Message.ENCRYPTION_PGP && message.getEncryption() != Message.ENCRYPTION_DECRYPTION_FAILED) {
-			displayImageMessage(viewHolder, message);
-		} else if (message.getType() == Message.TYPE_FILE && message.getEncryption() != Message.ENCRYPTION_PGP && message.getEncryption() != Message.ENCRYPTION_DECRYPTION_FAILED) {
+		} else if (message.isFileOrImage() && message.getEncryption() != Message.ENCRYPTION_PGP && message.getEncryption() != Message.ENCRYPTION_DECRYPTION_FAILED) {
 			if (message.getFileParams().width > 0 && message.getFileParams().height > 0) {
 				displayImageMessage(viewHolder, message);
 			} else if (message.getFileParams().runtime > 0) {
@@ -961,7 +958,7 @@ public class MessageAdapter extends ArrayAdapter<Message> implements CopyTextVie
 	}
 
 	public void showLocation(Message message) {
-		for (Intent intent : GeoHelper.createGeoIntentsFromMessage(message)) {
+		for (Intent intent : GeoHelper.createGeoIntentsFromMessage(activity, message)) {
 			if (intent.resolveActivity(getContext().getPackageManager()) != null) {
 				getContext().startActivity(intent);
 				return;
@@ -1001,6 +998,10 @@ public class MessageAdapter extends ArrayAdapter<Message> implements CopyTextVie
 				}
 			}
 		}
+	}
+
+	public void setHighlightedTerm(List<String> terms) {
+		this.highlightedTerm = terms == null ? null : StylingHelper.filterHighlightedWords(terms);
 	}
 
 	public interface OnQuoteListener {

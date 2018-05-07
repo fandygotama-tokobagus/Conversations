@@ -249,7 +249,7 @@ public class NotificationService {
 	}
 
 	private void setNotificationColor(final Builder mBuilder) {
-		mBuilder.setColor(ContextCompat.getColor(mXmppConnectionService, R.color.primary500));
+		mBuilder.setColor(ContextCompat.getColor(mXmppConnectionService, R.color.green600));
 	}
 
 	public void updateNotification(final boolean notify) {
@@ -548,10 +548,10 @@ public class NotificationService {
 		}
 		/** message preview for Android Auto **/
 		for (Message message : messages) {
-			Pair<String, Boolean> preview = UIHelper.getMessagePreview(mXmppConnectionService, message);
+			Pair<CharSequence, Boolean> preview = UIHelper.getMessagePreview(mXmppConnectionService, message);
 			// only show user written text
 			if (!preview.second) {
-				uBuilder.addMessage(preview.first);
+				uBuilder.addMessage(preview.first.toString());
 				uBuilder.setLatestTimestamp(message.getTimeSent());
 			}
 		}
@@ -603,7 +603,7 @@ public class NotificationService {
 	}
 
 	private PendingIntent createShowLocationIntent(final Message message) {
-		Iterable<Intent> intents = GeoHelper.createGeoIntentsFromMessage(message);
+		Iterable<Intent> intents = GeoHelper.createGeoIntentsFromMessage(mXmppConnectionService, message);
 		for (Intent intent : intents) {
 			if (intent.resolveActivity(mXmppConnectionService.getPackageManager()) != null) {
 				return PendingIntent.getActivity(mXmppConnectionService, generateRequestCode(message.getConversation(), 18), intent, PendingIntent.FLAG_UPDATE_CURRENT);

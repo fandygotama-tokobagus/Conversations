@@ -20,6 +20,7 @@ import eu.siacs.conversations.ui.adapter.MessageAdapter;
 import eu.siacs.conversations.utils.CryptoHelper;
 import eu.siacs.conversations.utils.Emoticons;
 import eu.siacs.conversations.utils.GeoHelper;
+import eu.siacs.conversations.utils.MessageUtils;
 import eu.siacs.conversations.utils.MimeUtils;
 import eu.siacs.conversations.utils.UIHelper;
 import rocks.xmpp.addr.Jid;
@@ -105,7 +106,7 @@ public class Message extends AbstractEntity {
 	private List<MucOptions.User> counterparts;
 	private WeakReference<MucOptions.User> user;
 
-	private Message(Conversational conversation) {
+	protected Message(Conversational conversation) {
 		this.conversation = conversation;
 	}
 
@@ -227,14 +228,6 @@ public class Message extends AbstractEntity {
 		message.setType(Message.TYPE_STATUS);
 		message.body = "LOAD_MORE";
 		return message;
-	}
-
-	public static Message createDateSeparator(Message message) {
-		final Message separator = new Message(message.getConversation());
-		separator.setType(Message.TYPE_STATUS);
-		separator.body = MessageAdapter.DATE_SEPARATOR_BODY;
-		separator.setTime(message.getTimeSent());
-		return separator;
 	}
 
 	@Override
@@ -613,7 +606,7 @@ public class Message extends AbstractEntity {
 	}
 
 	public SpannableStringBuilder getMergedBody() {
-		SpannableStringBuilder body = new SpannableStringBuilder(this.body.trim());
+		SpannableStringBuilder body = new SpannableStringBuilder(MessageUtils.filterLtrRtl(this.body).trim());
 		Message current = this;
 		while (current.mergeable(current.next())) {
 			current = current.next();
@@ -623,7 +616,7 @@ public class Message extends AbstractEntity {
 			body.append("\n\n");
 			body.setSpan(new MergeSeparator(), body.length() - 2, body.length(),
 					SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE);
-			body.append(current.getBody().trim());
+			body.append(MessageUtils.filterLtrRtl(current.getBody()).trim());
 		}
 		return body;
 	}
@@ -717,29 +710,7 @@ public class Message extends AbstractEntity {
 
 	public synchronized boolean treatAsDownloadable() {
 		if (treatAsDownloadable == null) {
-			try {
-				final String[] lines = body.split("\n");
-				if (lines.length == 0) {
-					treatAsDownloadable = false;
-					return false;
-				}
-				for (String line : lines) {
-					if (line.contains("\\s+")) {
-						treatAsDownloadable = false;
-						return false;
-					}
-				}
-				final URL url = new URL(lines[0]);
-				final String ref = url.getRef();
-				final String protocol = url.getProtocol();
-				final boolean encrypted = ref != null && AesGcmURLStreamHandler.IV_KEY.matcher(ref).matches();
-				final boolean followedByDataUri = lines.length == 2 && lines[1].startsWith("data:");
-				final boolean validAesGcm = AesGcmURLStreamHandler.PROTOCOL_NAME.equalsIgnoreCase(protocol) && encrypted && (lines.length == 1 || followedByDataUri);
-				final boolean validOob = ("http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol)) && (oob || encrypted) && lines.length == 1;
-				treatAsDownloadable = validAesGcm || validOob;
-			} catch (MalformedURLException e) {
-				treatAsDownloadable = false;
-			}
+			treatAsDownloadable = MessageUtils.treatAsDownloadable(this.body, this.oob);
 		}
 		return treatAsDownloadable;
 	}

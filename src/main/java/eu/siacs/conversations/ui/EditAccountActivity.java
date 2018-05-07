@@ -158,7 +158,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
 					startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url.toString())));
 					return;
 				} catch (ActivityNotFoundException e) {
-					Toast.makeText(EditAccountActivity.this, R.string.application_found_to_open_website, Toast.LENGTH_SHORT);
+					Toast.makeText(EditAccountActivity.this, R.string.application_found_to_open_website, Toast.LENGTH_SHORT).show();
 					return;
 				}
 			}
@@ -170,7 +170,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
 				} else {
 					jid = Jid.of(binding.accountJid.getText().toString());
 				}
-			} catch (final IllegalArgumentException e) {
+			} catch (final NullPointerException | IllegalArgumentException e) {
 				if (mUsernameMode) {
 					mAccountJidLayout.setError(getString(R.string.invalid_username));
 				} else {
@@ -575,8 +575,12 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
 		this.mMoreTable = (TableLayout) findViewById(R.id.server_info_more);
 
 		// Fandy Gotama
+
 		//this.mAccountJid.setText("+62818850161@mrspell-test.m.in-app.io");
 		//this.mPassword.setText("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIyLCJpYXQiOjE0OTg3Mjg3NDgyNTJ9.kDU1x_fWtoD5ImPtKMsJI8YjyEsRPefMTqQPsEDWj-w");
+		//this.mAccountJid.setText("+62818850161@mrspell-test.m.in-app.io");
+		//this.mPassword.setText("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIyLCJpYXQiOjE0OTg3Mjg3NDgyNTJ9.kDU1x_fWtoD5ImPtKMsJI8YjyEsRPefMTqQPsEDWj-w");
+
 
 		// Fandy Gulali
 		//this.mAccountJid.setText("+628119466285@mrspell-test.m.in-app.io");
@@ -764,7 +768,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
 	}
 
 	private String getUserModeDomain() {
-		if (mAccount != null) {
+		if (mAccount != null && mAccount.getJid().getDomain() != null) {
 			return mAccount.getJid().getDomain();
 		} else {
 			return Config.DOMAIN_LOCK;

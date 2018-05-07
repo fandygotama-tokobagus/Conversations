@@ -426,6 +426,8 @@
   <string name="none">Нищо</string>
   <string name="recently_used">Използвани наскоро</string>
   <string name="choose_quick_action">Изберете бързо действие</string>
+  <string name="search_contacts">Търсене в контактите</string>
+  <string name="search_groups">Търсене в груповите разговори</string>
   <string name="send_private_message">Изпращане на лично съобщение</string>
   <string name="user_has_left_conference">%1$s напусна груповия разговор!</string>
   <string name="username">Потребителско име</string>
@@ -700,4 +702,9 @@
   <string name="unable_to_start_recording">Записът не може да започне</string>
   <string name="please_wait">Моля, изчакайте…</string>
   <string name="no_microphone_permission">Conversations се нуждае от достъп до микрофона</string>
+  <string name="search_messages">Търсене в съобщенията</string>
+  <string name="gif">GIF</string>
+  <string name="view_conversation">Преглед на разговора</string>
+  <string name="pref_use_share_location_plugin">Разширение за споделяне на местоположението</string>
+  <string name="pref_use_share_location_plugin_summary">Използване на разширението за споделяне на местоположението вместо вградената карта</string>
 </resources>

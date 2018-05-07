@@ -52,6 +52,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import eu.siacs.conversations.Config;
 import eu.siacs.conversations.R;
@@ -82,7 +83,7 @@ public abstract class XmppActivity extends ActionBarActivity {
 	protected static final int REQUEST_BATTERY_OP = 0x49ff;
 	public XmppConnectionService xmppConnectionService;
 	public boolean xmppConnectionServiceBound = false;
-	protected boolean registeredListeners = false;
+	protected final AtomicBoolean registeredListeners = new AtomicBoolean(false);
 
 	protected int mColorRed;
 
@@ -103,9 +104,8 @@ public abstract class XmppActivity extends ActionBarActivity {
 			XmppConnectionBinder binder = (XmppConnectionBinder) service;
 			xmppConnectionService = binder.getService();
 			xmppConnectionServiceBound = true;
-			if (!registeredListeners && shouldRegisterListeners()) {
+			if (registeredListeners.compareAndSet(false,true)) {
 				registerListeners();
-				registeredListeners = true;
 			}
 			onBackendConnected();
 		}
@@ -208,20 +208,10 @@ public abstract class XmppActivity extends ActionBarActivity {
 				connectToBackend();
 			}
 		} else {
-			if (!registeredListeners) {
+			if (registeredListeners.compareAndSet(false,true)) {
 				this.registerListeners();
-				this.registeredListeners = true;
 			}
 			this.onBackendConnected();
-		}
-	}
-
-	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-	protected boolean shouldRegisterListeners() {
-		if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-			return !isDestroyed() && !isFinishing();
-		} else {
-			return !isFinishing();
 		}
 	}
 
@@ -236,9 +226,8 @@ public abstract class XmppActivity extends ActionBarActivity {
 	protected void onStop() {
 		super.onStop();
 		if (xmppConnectionServiceBound) {
-			if (registeredListeners) {
+			if (registeredListeners.compareAndSet(true, false)) {
 				this.unregisterListeners();
-				this.registeredListeners = false;
 			}
 			unbindService(mConnection);
 			xmppConnectionServiceBound = false;
@@ -320,28 +309,28 @@ public abstract class XmppActivity extends ActionBarActivity {
 
 	protected void unregisterListeners() {
 		if (this instanceof XmppConnectionService.OnConversationUpdate) {
-			this.xmppConnectionService.removeOnConversationListChangedListener();
+			this.xmppConnectionService.removeOnConversationListChangedListener((XmppConnectionService.OnConversationUpdate) this);
 		}
 		if (this instanceof XmppConnectionService.OnAccountUpdate) {
-			this.xmppConnectionService.removeOnAccountListChangedListener();
+			this.xmppConnectionService.removeOnAccountListChangedListener((XmppConnectionService.OnAccountUpdate) this);
 		}
 		if (this instanceof XmppConnectionService.OnCaptchaRequested) {
-			this.xmppConnectionService.removeOnCaptchaRequestedListener();
+			this.xmppConnectionService.removeOnCaptchaRequestedListener((XmppConnectionService.OnCaptchaRequested) this);
 		}
 		if (this instanceof XmppConnectionService.OnRosterUpdate) {
-			this.xmppConnectionService.removeOnRosterUpdateListener();
+			this.xmppConnectionService.removeOnRosterUpdateListener((XmppConnectionService.OnRosterUpdate) this);
 		}
 		if (this instanceof XmppConnectionService.OnMucRosterUpdate) {
-			this.xmppConnectionService.removeOnMucRosterUpdateListener();
+			this.xmppConnectionService.removeOnMucRosterUpdateListener((XmppConnectionService.OnMucRosterUpdate) this);
 		}
 		if (this instanceof OnUpdateBlocklist) {
-			this.xmppConnectionService.removeOnUpdateBlocklistListener();
+			this.xmppConnectionService.removeOnUpdateBlocklistListener((OnUpdateBlocklist) this);
 		}
 		if (this instanceof XmppConnectionService.OnShowErrorToast) {
-			this.xmppConnectionService.removeOnShowErrorToastListener();
+			this.xmppConnectionService.removeOnShowErrorToastListener((XmppConnectionService.OnShowErrorToast) this);
 		}
 		if (this instanceof OnKeyStatusUpdated) {
-			this.xmppConnectionService.removeOnNewKeysAvailableListener();
+			this.xmppConnectionService.removeOnNewKeysAvailableListener((OnKeyStatusUpdated) this);
 		}
 	}
 
@@ -467,25 +456,31 @@ public abstract class XmppActivity extends ActionBarActivity {
 		switchToConversation(conversation, null, false);
 	}
 
-	public void switchToConversation(Conversation conversation, String text,
-	                                 boolean newTask) {
-		switchToConversation(conversation, text, null, false, newTask);
+	public void switchToConversationAndQuote(Conversation conversation, String text) {
+		switchToConversation(conversation, text, true, null, false, false);
+	}
+
+	public void switchToConversation(Conversation conversation, String text, boolean newTask) {
+		switchToConversation(conversation, text, false, null, false, newTask);
 	}
 
 	public void highlightInMuc(Conversation conversation, String nick) {
-		switchToConversation(conversation, null, nick, false, false);
+		switchToConversation(conversation, null, false, nick, false, false);
 	}
 
 	public void privateMsgInMuc(Conversation conversation, String nick) {
-		switchToConversation(conversation, null, nick, true, false);
+		switchToConversation(conversation, null, false, nick, true, false);
 	}
 
-	private void switchToConversation(Conversation conversation, String text, String nick, boolean pm, boolean newTask) {
+	private void switchToConversation(Conversation conversation, String text, boolean asQuote, String nick, boolean pm, boolean newTask) {
 		Intent intent = new Intent(this, ConversationsActivity.class);
 		intent.setAction(ConversationsActivity.ACTION_VIEW_CONVERSATION);
 		intent.putExtra(ConversationsActivity.EXTRA_CONVERSATION, conversation.getUuid());
 		if (text != null) {
 			intent.putExtra(ConversationsActivity.EXTRA_TEXT, text);
+			if (asQuote) {
+				intent.putExtra(ConversationsActivity.EXTRA_AS_QUOTE, asQuote);
+			}
 		}
 		if (nick != null) {
 			intent.putExtra(ConversationsActivity.EXTRA_NICK, nick);

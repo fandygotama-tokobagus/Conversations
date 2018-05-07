@@ -72,6 +72,7 @@ import eu.siacs.conversations.ui.interfaces.OnConversationSelected;
 import eu.siacs.conversations.ui.interfaces.OnConversationsListItemUpdated;
 import eu.siacs.conversations.ui.service.EmojiService;
 import eu.siacs.conversations.ui.util.ActivityResult;
+import eu.siacs.conversations.ui.util.ConversationMenuConfigurator;
 import eu.siacs.conversations.ui.util.MenuDoubleTabUtil;
 import eu.siacs.conversations.ui.util.PendingItem;
 import eu.siacs.conversations.utils.ExceptionHelper;
@@ -85,6 +86,7 @@ public class ConversationsActivity extends XmppActivity implements OnConversatio
 	public static final String EXTRA_CONVERSATION = "conversationUuid";
 	public static final String EXTRA_DOWNLOAD_UUID = "eu.siacs.conversations.download_uuid";
 	public static final String EXTRA_TEXT = "text";
+	public static final String EXTRA_AS_QUOTE = "as_quote";
 	public static final String EXTRA_NICK = "nick";
 	public static final String EXTRA_IS_PRIVATE_MESSAGE = "pm";
 
@@ -363,6 +365,7 @@ public class ConversationsActivity extends XmppActivity implements OnConversatio
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		ConversationMenuConfigurator.reloadFeatures(this);
 		OmemoSetting.load(this);
 		new EmojiService(this).init();
 		this.binding = DataBindingUtil.setContentView(this, R.layout.activity_conversations);

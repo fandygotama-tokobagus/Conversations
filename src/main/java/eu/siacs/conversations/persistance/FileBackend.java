@@ -113,6 +113,19 @@ public class FileBackend {
 		return false;
 	}
 
+	private static boolean isInDirectoryThatShouldNotBeScanned(Context context, File file) {
+		return isInDirectoryThatShouldNotBeScanned(context, file.getAbsolutePath());
+	}
+
+	public static boolean isInDirectoryThatShouldNotBeScanned(Context context, String path) {
+		for(String type : new String[]{RecordingActivity.STORAGE_DIRECTORY_TYPE_NAME, "Files"}) {
+			if (path.startsWith(getConversationsDirectory(context, type))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public boolean deleteFile(Message message) {
 		File file = getFile(message);
 		if (file.delete()) {
@@ -332,7 +345,11 @@ public class FileBackend {
 		Log.d(Config.LOGTAG, "copy " + uri.toString() + " to private storage (mime=" + mime + ")");
 		String extension = MimeUtils.guessExtensionFromMimeType(mime);
 		if (extension == null) {
+			Log.d(Config.LOGTAG,"extension from mime type was null");
 			extension = getExtensionFromUri(uri);
+		}
+		if ("ogg".equals(extension) && type != null && type.startsWith("audio/")) {
+			extension = "oga";
 		}
 		message.setRelativeFilePath(message.getUuid() + "." + extension);
 		copyFileToPrivateStorage(mXmppConnectionService.getFileBackend().getFile(message), uri);
@@ -351,6 +368,12 @@ public class FileBackend {
 				filename = null;
 			} finally {
 				cursor.close();
+			}
+		}
+		if (filename == null) {
+			final List<String> segments = uri.getPathSegments();
+			if (segments.size() > 0) {
+				filename = segments.get(segments.size() -1);
 			}
 		}
 		int pos = filename == null ? -1 : filename.lastIndexOf('.');
@@ -878,7 +901,9 @@ public class FileBackend {
 		if (image || video) {
 			try {
 				Dimensions dimensions = image ? getImageDimensions(file) : getVideoDimensions(file);
-				body.append('|').append(dimensions.width).append('|').append(dimensions.height);
+				if (dimensions.valid()) {
+					body.append('|').append(dimensions.width).append('|').append(dimensions.height);
+				}
 			} catch (NotAVideoFile notAVideoFile) {
 				Log.d(Config.LOGTAG, "file with mime type " + file.getMimeType() + " was not a video file");
 				//fall threw
@@ -940,10 +965,28 @@ public class FileBackend {
 		return getVideoDimensions(mediaMetadataRetriever);
 	}
 
+	private static Dimensions getVideoDimensionsOfFrame(MediaMetadataRetriever mediaMetadataRetriever) {
+		Bitmap bitmap = null;
+		try {
+			bitmap = mediaMetadataRetriever.getFrameAtTime();
+			return new Dimensions(bitmap.getHeight(), bitmap.getWidth());
+		} catch (Exception e) {
+			return null;
+		} finally {
+			if (bitmap != null) {
+				bitmap.recycle();;
+			}
+		}
+	}
+
 	private static Dimensions getVideoDimensions(MediaMetadataRetriever metadataRetriever) throws NotAVideoFile {
 		String hasVideo = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO);
 		if (hasVideo == null) {
 			throw new NotAVideoFile();
+		}
+		Dimensions dimensions = getVideoDimensionsOfFrame(metadataRetriever);
+		if (dimensions != null) {
+			return dimensions;
 		}
 		int rotation = extractRotationFromMediaRetriever(metadataRetriever);
 		boolean rotated = rotation == 90 || rotation == 270;
@@ -967,31 +1010,29 @@ public class FileBackend {
 	}
 
 	private static int extractRotationFromMediaRetriever(MediaMetadataRetriever metadataRetriever) {
-		int rotation;
-		if (Build.VERSION.SDK_INT >= 17) {
-			String r = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
-			try {
-				rotation = Integer.parseInt(r);
-			} catch (Exception e) {
-				rotation = 0;
-			}
-		} else {
-			rotation = 0;
+		String r = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
+		try {
+			return Integer.parseInt(r);
+		} catch (Exception e) {
+			return 0;
 		}
-		return rotation;
 	}
 
 	private static class Dimensions {
 		public final int width;
 		public final int height;
 
-		public Dimensions(int height, int width) {
+		Dimensions(int height, int width) {
 			this.width = width;
 			this.height = height;
 		}
 
 		public int getMin() {
 			return Math.min(width, height);
+		}
+
+		public boolean valid() {
+			return width > 0 && height > 0;
 		}
 	}
 

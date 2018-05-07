@@ -426,6 +426,8 @@
   <string name="none">Ninguna</string>
   <string name="recently_used">Usada más recientemente</string>
   <string name="choose_quick_action">Elegir acción rápida</string>
+  <string name="search_contacts">Buscar contactos</string>
+  <string name="search_groups">Buscar conversaciones en grupo</string>
   <string name="send_private_message">Enviar mensaje privado</string>
   <string name="user_has_left_conference">%1$s ha dejado la conversación!</string>
   <string name="username">Usuario</string>
@@ -700,4 +702,9 @@
   <string name="unable_to_start_recording">No se ha podido empezar la grabación</string>
   <string name="please_wait">Por favor, espera...</string>
   <string name="no_microphone_permission">Conversations necesita acceder al micrófono</string>
+  <string name="search_messages">Buscar mensajes</string>
+  <string name="gif">GIF</string>
+  <string name="view_conversation">Ver conversación</string>
+  <string name="pref_use_share_location_plugin">Plugin para Compartir Ubicación</string>
+  <string name="pref_use_share_location_plugin_summary">Usar el Plugin externo para Compartir Ubicación en lugar del propio de la aplicación.</string>
 </resources>

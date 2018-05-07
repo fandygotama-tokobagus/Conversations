@@ -36,11 +36,10 @@ import android.content.res.TypedArray;
 import android.preference.PreferenceManager;
 import android.support.annotation.StyleRes;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
+import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.widget.TextView;
 
-import eu.siacs.conversations.Config;
 import eu.siacs.conversations.R;
 import eu.siacs.conversations.ui.SettingsActivity;
 
@@ -87,8 +86,9 @@ public class ThemeHelper {
 		}
 	}
 
-	public static void fixTextSize(Snackbar snackbar) {
-		TypedArray typedArray = snackbar.getContext().obtainStyledAttributes(new int[]{R.attr.TextSizeBody1});
+	public static void fix(Snackbar snackbar) {
+		final Context context = snackbar.getContext();
+		TypedArray typedArray = context.obtainStyledAttributes(new int[]{R.attr.TextSizeBody1});
 		final float size = typedArray.getDimension(0,0f);
 		typedArray.recycle();
 		if (size != 0f) {
@@ -97,6 +97,7 @@ public class ThemeHelper {
 			if (text != null && action != null) {
 				text.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
 				action.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
+				action.setTextColor(ContextCompat.getColor(context, R.color.blue_a100));
 			}
 		}
 	}
