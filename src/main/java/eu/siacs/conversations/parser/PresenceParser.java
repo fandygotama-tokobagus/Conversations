@@ -233,6 +233,7 @@ public class PresenceParser extends AbstractParser implements
 						mXmppConnectionService.updateConversationUi();
 						mXmppConnectionService.updateAccountUi();
 					} else if (contact.setAvatar(avatar)) {
+						mXmppConnectionService.syncRoster(account);
 						mXmppConnectionService.getAvatarService().clear(contact);
 						mXmppConnectionService.updateConversationUi();
 						mXmppConnectionService.updateRosterUi();
@@ -286,6 +287,9 @@ public class PresenceParser extends AbstractParser implements
 				contact.clearPresences();
 			} else {
 				contact.removePresence(from.getResource());
+			}
+			if (contact.getShownStatus() == Presence.Status.OFFLINE) {
+				contact.flagInactive();
 			}
 			mXmppConnectionService.onContactStatusChanged.onContactStatusChanged(contact, false);
 		} else if (type.equals("subscribe")) {

@@ -1,8 +1,10 @@
 package eu.siacs.conversations.entities;
 
 import android.annotation.SuppressLint;
+import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -303,6 +305,10 @@ public class MucOptions {
 
 		}
 
+		public boolean isDomain() {
+			return realJid != null && realJid.getLocal() == null && role == Role.NONE;
+		}
+
 		@Override
 		public int hashCode() {
 			int result = role != null ? role.hashCode() : 0;
@@ -322,7 +328,7 @@ public class MucOptions {
 		}
 
 		@Override
-		public int compareTo(User another) {
+		public int compareTo(@NonNull User another) {
 			if (another.getAffiliation().outranks(getAffiliation())) {
 				return 1;
 			} else if (getAffiliation().outranks(another.getAffiliation())) {
@@ -358,8 +364,7 @@ public class MucOptions {
 
 	private Account account;
 	private final Set<User> users = new HashSet<>();
-	private final List<String> features = new ArrayList<>();
-	private Data form = new Data();
+	private ServiceDiscoveryResult serviceDiscoveryResult;
 	private final Conversation conversation;
 	private boolean isOnline = false;
 	private Error error = Error.NONE;
@@ -373,47 +378,71 @@ public class MucOptions {
 		this.self = new User(this, createJoinJid(getProposedNick()));
 	}
 
-	public boolean updateConfiguration(List<String> features, Data data) {
-		updateFeatures(features);
-		updateFormData(data == null ? new Data() : data);
-		Field allowPmField = this.form.getFieldByName("muc#roomconfig_allowpm");
-		boolean changed = false;
-		changed |= conversation.setAttribute(Conversation.ATTRIBUTE_ALLOW_PM, allowPmField == null || "1".equals(allowPmField.getValue()));
+	public boolean updateConfiguration(ServiceDiscoveryResult serviceDiscoveryResult) {
+		this.serviceDiscoveryResult = serviceDiscoveryResult;
+		String name;
+		Field roomConfigName = getRoomInfoForm().getFieldByName("muc#roomconfig_roomname");
+		if (roomConfigName != null) {
+			name = roomConfigName.getValue();
+		} else {
+			List<ServiceDiscoveryResult.Identity> identities = serviceDiscoveryResult.getIdentities();
+			String identityName = identities.size() > 0 ? identities.get(0).getName() : null;
+			final Jid jid = conversation.getJid();
+			if (identityName != null && !identityName.equals(jid == null ? null : jid.getEscapedLocal())) {
+				name = identityName;
+			} else {
+				name = null;
+			}
+		}
+		boolean changed = conversation.setAttribute("muc_name", name);
 		changed |= conversation.setAttribute(Conversation.ATTRIBUTE_MEMBERS_ONLY, this.hasFeature("muc_membersonly"));
 		changed |= conversation.setAttribute(Conversation.ATTRIBUTE_MODERATED, this.hasFeature("muc_moderated"));
 		changed |= conversation.setAttribute(Conversation.ATTRIBUTE_NON_ANONYMOUS, this.hasFeature("muc_nonanonymous"));
 		return changed;
 	}
 
-	private void updateFeatures(List<String> features) {
-		this.features.clear();
-		this.features.addAll(features);
+
+	private Data getRoomInfoForm() {
+		final List<Data> forms = serviceDiscoveryResult == null ? Collections.emptyList() : serviceDiscoveryResult.forms;
+		return forms.size() == 0 ? new Data() : forms.get(0);
 	}
 
 	public String getAvatar() {
 		return account.getRoster().getContact(conversation.getJid()).getAvatar();
 	}
 
-	private void updateFormData(Data form) {
-		this.form = form;
+	public boolean hasFeature(String feature) {
+		return this.serviceDiscoveryResult != null && this.serviceDiscoveryResult.features.contains(feature);
 	}
 
-	public boolean hasFeature(String feature) {
-		return this.features.contains(feature);
-	}
+	public boolean hasVCards() {
+	    return hasFeature("vcard-temp");
+    }
 
 	public boolean canInvite() {
-		Field field = this.form.getFieldByName("muc#roomconfig_allowinvites");
+		Field field = getRoomInfoForm().getFieldByName("muc#roomconfig_allowinvites");
 		return !membersOnly() || self.getRole().ranks(Role.MODERATOR) || (field != null && "1".equals(field.getValue()));
 	}
 
 	public boolean canChangeSubject() {
-		Field field = this.form.getFieldByName("muc#roomconfig_changesubject");
+		Field field = getRoomInfoForm().getFieldByName("muc#roominfo_changesubject");
 		return self.getRole().ranks(Role.MODERATOR) || (field != null && "1".equals(field.getValue()));
 	}
 
 	public boolean allowPm() {
-		return conversation.getBooleanAttribute(Conversation.ATTRIBUTE_ALLOW_PM, false);
+		final Field field = getRoomInfoForm().getFieldByName("muc#roomconfig_allowpm");
+		if (field == null) {
+			return true; //fall back if field does not exists
+		}
+		if ("anyone".equals(field.getValue())) {
+			return true;
+		} else if ("participants".equals(field.getValue())) {
+			return self.getRole().ranks(Role.PARTICIPANT);
+		} else if ("moderators".equals(field.getValue())) {
+			return self.getRole().ranks(Role.MODERATOR);
+		} else {
+			return false;
+		}
 	}
 
 	public boolean participating() {
@@ -584,17 +613,13 @@ public class MucOptions {
 
 	public ArrayList<User> getUsers(boolean includeOffline) {
 		synchronized (users) {
-			if (includeOffline) {
-				return new ArrayList<>(users);
-			} else {
-				ArrayList<User> onlineUsers = new ArrayList<>();
-				for (User user : users) {
-					if (user.getRole().ranks(Role.PARTICIPANT)) {
-						onlineUsers.add(user);
+				ArrayList<User> users = new ArrayList<>();
+				for (User user : this.users) {
+					if (!user.isDomain() && (includeOffline || user.getRole().ranks(Role.PARTICIPANT))) {
+						users.add(user);
 					}
 				}
-				return onlineUsers;
-			}
+				return users;
 		}
 	}
 
@@ -619,7 +644,7 @@ public class MucOptions {
 		jids.add(account.getJid().asBareJid());
 		synchronized (users) {
 			for (User user : users) {
-				if (user.getRealJid() == null || jids.add(user.getRealJid())) {
+				if (user.getRealJid() == null || (user.getRealJid().getLocal() != null && jids.add(user.getRealJid()))) {
 					subset.add(user);
 				}
 				if (subset.size() >= max) {
@@ -688,7 +713,11 @@ public class MucOptions {
 		return this.conversation.getAttribute("subject");
 	}
 
-	public List<User> getFallbackUsersFromCryptoTargets() {
+	public String getName() {
+		return this.conversation.getAttribute("muc_name");
+	}
+
+	private List<User> getFallbackUsersFromCryptoTargets() {
 		List<User> users = new ArrayList<>();
 		for (Jid jid : conversation.getAcceptedCryptoTargets()) {
 			User user = new User(this, null);
@@ -803,11 +832,11 @@ public class MucOptions {
 		return this.conversation;
 	}
 
-	public List<Jid> getMembers() {
+	public List<Jid> getMembers(final boolean includeDomains) {
 		ArrayList<Jid> members = new ArrayList<>();
 		synchronized (users) {
 			for (User user : users) {
-				if (user.affiliation.ranks(Affiliation.MEMBER) && user.realJid != null) {
+				if (user.affiliation.ranks(Affiliation.MEMBER) && user.realJid != null && (!user.isDomain() || includeDomains)) {
 					members.add(user.realJid);
 				}
 			}

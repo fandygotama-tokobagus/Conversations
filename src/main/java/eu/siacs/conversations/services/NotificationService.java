@@ -710,7 +710,7 @@ public class NotificationService {
 	}
 
 	public static Pattern generateNickHighlightPattern(final String nick) {
-		return Pattern.compile("(?<=(^|\\s))" + Pattern.quote(nick) + "\\b", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+		return Pattern.compile("(?<=(^|\\s))" + Pattern.quote(nick) + "\\b");
 	}
 
 	public void setOpenConversation(final Conversation conversation) {
@@ -769,6 +769,10 @@ public class NotificationService {
 	}
 
 	public void updateErrorNotification() {
+		if (Config.SUPPRESS_ERROR_NOTIFICATION) {
+			cancel(ERROR_NOTIFICATION_ID);
+			return;
+		}
 		final List<Account> errors = new ArrayList<>();
 		for (final Account account : mXmppConnectionService.getAccounts()) {
 			if (account.hasErrorStatus() && account.showErrorNotification()) {

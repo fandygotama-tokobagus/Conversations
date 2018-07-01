@@ -227,7 +227,6 @@
   <string name="delete_bookmark">Elimina dels marcadors</string>
   <string name="bookmark_already_exists">Aquest marcador ja existeix</string>
   <string name="action_edit_subject">Edita el tema del xat de grup</string>
-  <string name="edit_subject_hint">El tema d\'aquest xat de grup</string>
   <string name="joining_conference">S\'està unint al xat de grup...</string>
   <string name="leave">Surt</string>
   <string name="contact_added_you">S\'ha afegit el contacte a la llista de contactes</string>
@@ -276,8 +275,6 @@
   <string name="pref_use_indicate_received_summary">Els missatges rebuts seràn marcats amb uns ticks verds si ho admet</string>
   <string name="pref_use_send_button_to_indicate_status_summary">Pintar el botó d\'enviament per indicar l\'estatus del contacte</string>
   <string name="pref_expert_options_other">Altres</string>
-  <string name="pref_conference_name">Nom del xat de grup</string>
-  <string name="pref_conference_name_summary">Utilitzeu el tema en comptes de JID per identificar els xats del grup</string>
   <string name="pref_autojoin">Uniu-vos automàticament als xats de grup</string>
   <string name="pref_autojoin_summary">Respecta l\'indicador d\'autoentrada als marcadors de xat de grup</string>
   <string name="toast_message_omemo_fingerprint">S\'ha copiat l\'empremta digital d\'OMEMO al porta-retalls.</string>
@@ -422,10 +419,6 @@ mentrestant.</string>
     <item quantity="one">%d certificat esborrat</item>
     <item quantity="other">%d certificats esborrats</item>
   </plurals>
-  <plurals name="select_contact">
-    <item quantity="one">Seleccionar %d contacte</item>
-    <item quantity="other">Seleccionar %d contactes</item>
-  </plurals>
   <string name="pref_quick_action_summary">Reemplaça el botó d\'enviar per una acció ràpida</string>
   <string name="pref_quick_action">Acció ràpida</string>
   <string name="none">Cap</string>
@@ -519,7 +512,6 @@ missatges.\n\nAra se us demanarà que desactiveu-las.</string>
   <string name="correct_message">Corregeix el missatge</string>
   <string name="send_corrected_message">Envia el missatge corregit</string>
   <string name="no_keys_just_confirm">Ja confieu en aquest contacte. Si seleccioneu \"fet\", només confirma que forma %s part d\'aquest xat en grup.</string>
-  <string name="select_image_and_crop">Seleccioneu la imatge i retalleu</string>
   <string name="this_account_is_disabled">Heu desactivat aquest compte</string>
   <string name="security_error_invalid_file_access">Error de seguretat: accés d\'arxiu no vàlid</string>
   <string name="no_application_to_share_uri">No s\'ha trobat cap aplicació que comparteixi URI</string>

@@ -18,6 +18,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -34,6 +35,7 @@ import android.os.PowerManager;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.BoolRes;
+import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AlertDialog.Builder;
@@ -48,7 +50,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -59,6 +60,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import eu.siacs.conversations.Config;
 import eu.siacs.conversations.R;
 import eu.siacs.conversations.crypto.PgpEngine;
+import eu.siacs.conversations.databinding.DialogQuickeditBinding;
 import eu.siacs.conversations.entities.Account;
 import eu.siacs.conversations.entities.Contact;
 import eu.siacs.conversations.entities.Conversation;
@@ -70,6 +72,7 @@ import eu.siacs.conversations.services.XmppConnectionService;
 import eu.siacs.conversations.services.XmppConnectionService.XmppConnectionBinder;
 import eu.siacs.conversations.ui.util.MenuDoubleTabUtil;
 import eu.siacs.conversations.ui.util.PresenceSelector;
+import eu.siacs.conversations.ui.util.SoftKeyboardUtils;
 import eu.siacs.conversations.utils.ExceptionHelper;
 import eu.siacs.conversations.utils.ThemeHelper;
 import eu.siacs.conversations.xmpp.OnKeyStatusUpdated;
@@ -93,7 +96,6 @@ public abstract class XmppActivity extends ActionBarActivity {
 
 	private boolean isCameraFeatureAvailable = false;
 
-	protected boolean mUseSubject = true;
 	protected int mTheme;
 	protected boolean mUsingEnterKey = false;
 	protected Toast mToast;
@@ -400,7 +402,6 @@ public abstract class XmppActivity extends ActionBarActivity {
 		setTheme(this.mTheme);
 
 		this.mUsingEnterKey = usingEnterKey();
-		mUseSubject = getBooleanPreference("use_subject", R.bool.use_subject);
 	}
 
 	protected boolean isCameraFeatureAvailable() {
@@ -443,7 +444,7 @@ public abstract class XmppActivity extends ActionBarActivity {
 	}
 
 	protected boolean usingEnterKey() {
-		return getPreferences().getBoolean("display_enter_key", getResources().getBoolean(R.bool.display_enter_key));
+		return getBooleanPreference("display_enter_key", R.bool.display_enter_key);
 	}
 
 	protected SharedPreferences getPreferences() {
@@ -452,10 +453,6 @@ public abstract class XmppActivity extends ActionBarActivity {
 
 	protected boolean getBooleanPreference(String name, @BoolRes int res) {
 		return getPreferences().getBoolean(name, getResources().getBoolean(res));
-	}
-
-	public boolean useSubjectToIdentifyConference() {
-		return mUseSubject;
 	}
 
 	public void switchToConversation(Conversation conversation) {
@@ -687,51 +684,62 @@ public abstract class XmppActivity extends ActionBarActivity {
 		builder.create().show();
 	}
 
-	protected void quickEdit(String previousValue, int hint, OnValueEdited callback) {
-		quickEdit(previousValue, callback, hint, false);
+	protected void quickEdit(String previousValue, @StringRes int hint, OnValueEdited callback) {
+		quickEdit(previousValue, callback, hint, false, false);
+	}
+
+	protected void quickEdit(String previousValue, @StringRes int hint, OnValueEdited callback, boolean permitEmpty) {
+		quickEdit(previousValue, callback, hint, false, permitEmpty);
 	}
 
 	protected void quickPasswordEdit(String previousValue, OnValueEdited callback) {
-		quickEdit(previousValue, callback, R.string.password, true);
+		quickEdit(previousValue, callback, R.string.password, true, false);
 	}
 
 	@SuppressLint("InflateParams")
 	private void quickEdit(final String previousValue,
 	                       final OnValueEdited callback,
-	                       final int hint,
-	                       boolean password) {
+	                       final @StringRes int hint,
+	                       boolean password,
+	                       boolean permitEmpty) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		View view = getLayoutInflater().inflate(R.layout.quickedit, null);
-		final EditText editor = view.findViewById(R.id.editor);
+		DialogQuickeditBinding binding = DataBindingUtil.inflate(getLayoutInflater(),R.layout.dialog_quickedit, null, false);
 		if (password) {
-			editor.setInputType(InputType.TYPE_CLASS_TEXT
-					| InputType.TYPE_TEXT_VARIATION_PASSWORD);
+			binding.inputEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 		}
 		builder.setPositiveButton(R.string.accept, null);
 		if (hint != 0) {
-			editor.setHint(hint);
+			binding.inputLayout.setHint(getString(hint));
 		}
-		editor.requestFocus();
-		editor.setText("");
+		binding.inputEditText.requestFocus();
 		if (previousValue != null) {
-			editor.getText().append(previousValue);
+			binding.inputEditText.getText().append(previousValue);
 		}
-		builder.setView(view);
+		builder.setView(binding.getRoot());
 		builder.setNegativeButton(R.string.cancel, null);
 		final AlertDialog dialog = builder.create();
+		dialog.setOnShowListener(d -> SoftKeyboardUtils.showKeyboard(binding.inputEditText));
 		dialog.show();
 		View.OnClickListener clickListener = v -> {
-			String value = editor.getText().toString();
-			if (!value.equals(previousValue) && value.trim().length() > 0) {
+			String value = binding.inputEditText.getText().toString();
+			if (!value.equals(previousValue) && (!value.trim().isEmpty() || permitEmpty)) {
 				String error = callback.onValueEdited(value);
 				if (error != null) {
-					editor.setError(error);
+					binding.inputLayout.setError(error);
 					return;
 				}
 			}
+			SoftKeyboardUtils.hideSoftKeyboard(binding.inputEditText);
 			dialog.dismiss();
 		};
 		dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(clickListener);
+		dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener((v -> {
+			SoftKeyboardUtils.hideSoftKeyboard(binding.inputEditText);
+			dialog.dismiss();
+		}));
+		dialog.setOnDismissListener(dialog1 -> {
+			SoftKeyboardUtils.hideSoftKeyboard(binding.inputEditText);
+        });
 	}
 
 	protected boolean hasStoragePermission(int requestCode) {
@@ -786,7 +794,7 @@ public abstract class XmppActivity extends ActionBarActivity {
 	}
 
 	protected boolean manuallyChangePresence() {
-		return getPreferences().getBoolean(SettingsActivity.MANUALLY_CHANGE_PRESENCE, getResources().getBoolean(R.bool.manually_change_presence));
+		return getBooleanPreference(SettingsActivity.MANUALLY_CHANGE_PRESENCE, R.bool.manually_change_presence);
 	}
 
 	protected String getShareableUri() {
@@ -916,22 +924,11 @@ public abstract class XmppActivity extends ActionBarActivity {
 
 		public static ConferenceInvite parse(Intent data) {
 			ConferenceInvite invite = new ConferenceInvite();
-			invite.uuid = data.getStringExtra("conversation");
+			invite.uuid = data.getStringExtra(ChooseContactActivity.EXTRA_CONVERSATION);
 			if (invite.uuid == null) {
 				return null;
 			}
-			try {
-				if (data.getBooleanExtra("multiple", false)) {
-					String[] toAdd = data.getStringArrayExtra("contacts");
-					for (String item : toAdd) {
-						invite.jids.add(Jid.of(item));
-					}
-				} else {
-					invite.jids.add(Jid.of(data.getStringExtra("contact")));
-				}
-			} catch (final IllegalArgumentException ignored) {
-				return null;
-			}
+			invite.jids.addAll(ChooseContactActivity.extractJabberIds(data));
 			return invite;
 		}
 

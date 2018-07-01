@@ -20,6 +20,7 @@
   <string name="title_activity_sharewith">Condividi con Conversation</string>
   <string name="title_activity_start_conversation">Inizia una conversazione</string>
   <string name="title_activity_choose_contact">Scegli un contatto</string>
+  <string name="title_activity_choose_contacts">Scegli i contatti</string>
   <string name="title_activity_share_via_account">Condividi via account</string>
   <string name="title_activity_block_list">Lista nera</string>
   <string name="just_now">adesso</string>
@@ -42,6 +43,7 @@
   <string name="block_domain_text">Bloccare tutti i contatti da %s?</string>
   <string name="unblock_domain_text">Sbloccare tutti i contatti da %s?</string>
   <string name="contact_blocked">Contatto bloccato</string>
+  <string name="blocked">Bloccato</string>
   <string name="remove_bookmark_text">Vuoi rimuovere il segnalibro %s? La conversazione associata con questo contatto non sarà rimossa.</string>
   <string name="register_account">Registra un nuovo account sul server</string>
   <string name="change_password_on_server">Cambia la password sul server</string>
@@ -227,7 +229,7 @@
   <string name="delete_bookmark">Elimina segnalibro</string>
   <string name="bookmark_already_exists">Questo segnalibro esiste già</string>
   <string name="action_edit_subject">Modifica titolo chat di gruppo</string>
-  <string name="edit_subject_hint">L\'argomento di questa chat di gruppo</string>
+  <string name="topic">Argomento</string>
   <string name="joining_conference">Ingresso nella chat di gruppo...</string>
   <string name="leave">Abbandona</string>
   <string name="contact_added_you">Il contatto ti ha aggiunto alla sua lista contatti</string>
@@ -276,8 +278,6 @@
   <string name="pref_use_indicate_received_summary">I messaggi ricevuti verranno contrassegnati con una spunta verde se supportato</string>
   <string name="pref_use_send_button_to_indicate_status_summary">Colora il pulsante di invio per indicare lo stato del contatto</string>
   <string name="pref_expert_options_other">Altro</string>
-  <string name="pref_conference_name">Nome chat di gruppo</string>
-  <string name="pref_conference_name_summary">Usa il titolo invece del JID per identificare le chat di gruppo</string>
   <string name="pref_autojoin">Unisciti automaticamente alle chat di gruppo</string>
   <string name="pref_autojoin_summary">Rispetta l\'opzione di entrata automatica nei segnalibri di chat di gruppo</string>
   <string name="toast_message_omemo_fingerprint">impronta OMEMO copiata negli appunti|</string>
@@ -293,6 +293,7 @@
   <string name="check_x_filesize_on_host">Controlla dimensione %1$s su %2$s</string>
   <string name="message_options">Opzioni del messaggio</string>
   <string name="quote">Cita</string>
+  <string name="paste_as_quote">Incolla come citazione</string>
   <string name="copy_original_url">Copia URL originale</string>
   <string name="send_again">Invia di nuovo</string>
   <string name="file_url">URL del file</string>
@@ -419,10 +420,6 @@
     <item quantity="one">Cancellato il %d certificato</item>
     <item quantity="other">Cancellati %d certificati</item>
   </plurals>
-  <plurals name="select_contact">
-    <item quantity="one">Seleziona il %d contatto</item>
-    <item quantity="other">Selezionati %d contatti</item>
-  </plurals>
   <string name="pref_quick_action_summary">Sostituisci il tasto invio con un\'azione rapida</string>
   <string name="pref_quick_action">Azione rapida</string>
   <string name="none">Nessuno</string>
@@ -508,7 +505,6 @@
   <string name="correct_message">Correggi messaggio</string>
   <string name="send_corrected_message">Invia messaggio corretto</string>
   <string name="no_keys_just_confirm">Ti fidi già di questo contatto. Selezionando \'fatto\' stai solo confermando che %s fa parte di questa chat di gruppo.</string>
-  <string name="select_image_and_crop">Seleziona immagine e ritagliala</string>
   <string name="this_account_is_disabled">Hai disabilitato questo account</string>
   <string name="security_error_invalid_file_access">Errore di sicurezza: accesso file non valido</string>
   <string name="no_application_to_share_uri">Nessuna applicazione trovata per condividere l\'URI</string>
@@ -711,4 +707,15 @@
   <string name="pref_use_share_location_plugin_summary">Usa il Plugin Condivisione Posizione al posto della mappa integrata</string>
   <string name="copy_link">Copia indirizzo web</string>
   <string name="copy_jabber_id">Copia ID Jabber</string>
+  <string name="p1_s3_filetransfer">Condivisione file in HTTP per S3</string>
+  <string name="pref_start_search">Ricerca diretta</string>
+  <string name="pref_start_search_summary">Nella schermata \'Inizia conversazione\' apri la tastiera e posiziona il cursore nella casella di ricerca</string>
+  <string name="group_chat_avatar">Avatar chat di gruppo</string>
+  <string name="host_does_not_support_group_chat_avatars">L\'host non supporta gli avatar per chat di gruppo</string>
+  <string name="only_the_owner_can_change_group_chat_avatar">Solo il proprietario può cambiare l\'avatar della chat di gruppo</string>
+  <string name="contact_name">Nome contatto</string>
+  <string name="nickname">Soprannome</string>
+  <string name="group_chat_name">Nome</string>
+  <string name="providing_a_name_is_optional">Il nome è facoltativo</string>
+  <string name="create_dialog_group_chat_name">Nome chat di gruppo</string>
 </resources>

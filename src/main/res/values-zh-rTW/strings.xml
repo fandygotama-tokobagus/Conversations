@@ -256,8 +256,6 @@
   <string name="pref_use_indicate_received_summary">如果支援收到的訊息將會以綠色勾號標識</string>
   <string name="pref_use_send_button_to_indicate_status_summary">發送按鈕採用其他顏色以示發送狀態的區別</string>
   <string name="pref_expert_options_other">其他</string>
-  <string name="pref_conference_name">聊天群組名稱</string>
-  <string name="pref_conference_name_summary">用標題而非 JID 來識別聊天群組</string>
   <string name="toast_message_omemo_fingerprint">OMEMO 指紋已拷貝到剪貼板！</string>
   <string name="using_account">用帳戶  %s</string>
   <string name="checking_x">正在 HTTP 伺服器中檢查 %s</string>
@@ -369,9 +367,6 @@
   <plurals name="toast_delete_certificates">
     <item quantity="other">%d 個證書已被刪除</item>
   </plurals>
-  <plurals name="select_contact">
-    <item quantity="other">選擇 %d 個連絡人</item>
-  </plurals>
   <string name="pref_quick_action_summary">以快速動作替代發送按鈕</string>
   <string name="pref_quick_action">快速動作</string>
   <string name="none">無</string>
@@ -447,7 +442,6 @@
   <string name="this_field_is_required">必填</string>
   <string name="correct_message">更正訊息</string>
   <string name="send_corrected_message">發送更正後的訊息</string>
-  <string name="select_image_and_crop">選擇照片並裁剪</string>
   <string name="this_account_is_disabled">你已經禁用了此帳戶</string>
   <string name="security_error_invalid_file_access">安全錯誤：檔案存取無效</string>
   <string name="no_application_to_share_uri">找不到可以分享網址(URI)的應用程式</string>
