@@ -575,16 +575,17 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
 		this.mMoreTable = (TableLayout) findViewById(R.id.server_info_more);
 
 		// Fandy Gotama
-<<<<<<< HEAD
+		this.mAccountJidLayout.getEditText().setText("test_mrspell_0@mrspell.m.in-app.io");
+		this.mPasswordLayout.getEditText().setText("password_0");
+		this.mHostnameLayout.getEditText().setText("mrspell.m.in-app.io");
+		//this.mAccountJid.setText("+62818850161@mrspell-test.m.in-app.io");
+		//this.mPassword.setText("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIyLCJpYXQiOjE0OTg3Mjg3NDgyNTJ9.kDU1x_fWtoD5ImPtKMsJI8YjyEsRPefMTqQPsEDWj-w");
+		//this.mAccountJid.setText("+62818850161@mrspell-test.m.in-app.io");
+		//this.mPassword.setText("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIyLCJpYXQiOjE0OTg3Mjg3NDgyNTJ9.kDU1x_fWtoD5ImPtKMsJI8YjyEsRPefMTqQPsEDWj-w");
 
 		//this.mAccountJid.setText("+62818850161@mrspell-test.m.in-app.io");
 		//this.mPassword.setText("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIyLCJpYXQiOjE0OTg3Mjg3NDgyNTJ9.kDU1x_fWtoD5ImPtKMsJI8YjyEsRPefMTqQPsEDWj-w");
-		//this.mAccountJid.setText("+62818850161@mrspell-test.m.in-app.io");
-		//this.mPassword.setText("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIyLCJpYXQiOjE0OTg3Mjg3NDgyNTJ9.kDU1x_fWtoD5ImPtKMsJI8YjyEsRPefMTqQPsEDWj-w");
-=======
-		this.mAccountJid.setText("+62818850161@mrspell-test.m.in-app.io");
-		this.mPassword.setText("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIyLCJpYXQiOjE0OTg3Mjg3NDgyNTJ9.kDU1x_fWtoD5ImPtKMsJI8YjyEsRPefMTqQPsEDWj-w");
->>>>>>> siacs-master
+
 
 		// Fandy Gulali
 		//this.mAccountJid.setText("+628119466285@mrspell-test.m.in-app.io");
