@@ -88,7 +88,6 @@ public abstract class XmppActivity extends ActionBarActivity {
 	protected static final int REQUEST_BATTERY_OP = 0x49ff;
 	public XmppConnectionService xmppConnectionService;
 	public boolean xmppConnectionServiceBound = false;
-	protected final AtomicBoolean registeredListeners = new AtomicBoolean(false);
 
 	protected int mColorRed;
 
@@ -108,9 +107,7 @@ public abstract class XmppActivity extends ActionBarActivity {
 			XmppConnectionBinder binder = (XmppConnectionBinder) service;
 			xmppConnectionService = binder.getService();
 			xmppConnectionServiceBound = true;
-			if (registeredListeners.compareAndSet(false,true)) {
-				registerListeners();
-			}
+			registerListeners();
 			onBackendConnected();
 		}
 
@@ -212,9 +209,7 @@ public abstract class XmppActivity extends ActionBarActivity {
 				connectToBackend();
 			}
 		} else {
-			if (registeredListeners.compareAndSet(false,true)) {
-				this.registerListeners();
-			}
+			this.registerListeners();
 			this.onBackendConnected();
 		}
 	}
@@ -230,9 +225,7 @@ public abstract class XmppActivity extends ActionBarActivity {
 	protected void onStop() {
 		super.onStop();
 		if (xmppConnectionServiceBound) {
-			if (registeredListeners.compareAndSet(true, false)) {
-				this.unregisterListeners();
-			}
+			this.unregisterListeners();
 			unbindService(mConnection);
 			xmppConnectionServiceBound = false;
 		}
@@ -480,9 +473,9 @@ public abstract class XmppActivity extends ActionBarActivity {
 		intent.setAction(ConversationsActivity.ACTION_VIEW_CONVERSATION);
 		intent.putExtra(ConversationsActivity.EXTRA_CONVERSATION, conversation.getUuid());
 		if (text != null) {
-			intent.putExtra(ConversationsActivity.EXTRA_TEXT, text);
+			intent.putExtra(Intent.EXTRA_TEXT, text);
 			if (asQuote) {
-				intent.putExtra(ConversationsActivity.EXTRA_AS_QUOTE, asQuote);
+				intent.putExtra(ConversationsActivity.EXTRA_AS_QUOTE, true);
 			}
 		}
 		if (nick != null) {
@@ -539,11 +532,15 @@ public abstract class XmppActivity extends ActionBarActivity {
 	}
 
 	protected void delegateUriPermissionsToService(Uri uri) {
-		Intent intent = new Intent(this,XmppConnectionService.class);
+		Intent intent = new Intent(this, XmppConnectionService.class);
 		intent.setAction(Intent.ACTION_SEND);
 		intent.setData(uri);
 		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-		startService(intent);
+		try {
+			startService(intent);
+		} catch (Exception e) {
+			Log.e(Config.LOGTAG,"unable to delegate uri permission",e);
+		}
 	}
 
 	protected void inviteToConversation(Conversation conversation) {

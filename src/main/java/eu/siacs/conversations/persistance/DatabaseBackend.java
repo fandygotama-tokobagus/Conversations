@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.json.JSONException;
@@ -774,6 +775,28 @@ public class DatabaseBackend extends SQLiteOpenHelper {
 		};
 	}
 
+	public List<FilePath> getRelativeFilePaths(String account, Jid jid, int limit) {
+		SQLiteDatabase db = this.getReadableDatabase();
+		final String SQL = "select uuid,relativeFilePath from messages where type in (1,2) and conversationUuid=(select uuid from conversations where accountUuid=? and (contactJid=? or contactJid like ?)) order by timeSent desc";
+		final String[] args = {account, jid.toEscapedString(), jid.toEscapedString()+"/%"};
+		Cursor cursor = db.rawQuery(SQL+(limit > 0 ? " limit "+String.valueOf(limit) : ""), args);
+		List<FilePath> filesPaths = new ArrayList<>();
+		while(cursor.moveToNext()) {
+			filesPaths.add(new FilePath(cursor.getString(0),cursor.getString(1)));
+		}
+		cursor.close();
+		return filesPaths;
+	}
+
+	public static class FilePath {
+		public final UUID uuid;
+		public final String path;
+		private FilePath(String uuid, String path) {
+			this.uuid = UUID.fromString(uuid);
+			this.path = path;
+		}
+	}
+
 	public Conversation findConversation(final Account account, final Jid contactJid) {
 		SQLiteDatabase db = this.getReadableDatabase();
 		String[] selectionArgs = {account.getUuid(),
@@ -888,7 +911,7 @@ public class DatabaseBackend extends SQLiteOpenHelper {
 		final SQLiteDatabase db = this.getWritableDatabase();
 		db.beginTransaction();
 		for (Contact contact : roster.getContacts()) {
-			if (contact.getOption(Contact.Options.IN_ROSTER) || contact.getAvatar() != null) {
+			if (contact.getOption(Contact.Options.IN_ROSTER) || contact.getAvatarFilename() != null) {
 				db.insert(Contact.TABLENAME, null, contact.getContentValues());
 			} else {
 				String where = Contact.ACCOUNT + "=? AND " + Contact.JID + "=?";

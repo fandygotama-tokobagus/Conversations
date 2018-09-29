@@ -25,6 +25,7 @@ import eu.siacs.conversations.Config;
 import eu.siacs.conversations.R;
 import eu.siacs.conversations.crypto.axolotl.AxolotlService;
 import eu.siacs.conversations.entities.Account;
+import eu.siacs.conversations.entities.Bookmark;
 import eu.siacs.conversations.entities.Conversation;
 import eu.siacs.conversations.entities.DownloadableFile;
 import eu.siacs.conversations.services.MessageArchiveService;
@@ -141,6 +142,13 @@ public class IqGenerator extends AbstractGenerator {
 		return publish("urn:xmpp:avatar:data", item);
 	}
 
+	public IqPacket publishElement(final String namespace,final Element element, final Bundle options) {
+		final Element item = new Element("item");
+		item.setAttribute("id","current");
+		item.addChild(element);
+		return publish(namespace, item, options);
+	}
+
 	public IqPacket publishAvatarMetadata(final Avatar avatar) {
 		final Element item = new Element("item");
 		item.setAttribute("id", avatar.sha1sum);
@@ -228,6 +236,7 @@ public class IqGenerator extends AbstractGenerator {
 
 	public IqPacket publishDeviceIds(final Set<Integer> ids, final Bundle publishOptions) {
 		final Element item = new Element("item");
+		item.setAttribute("id", "current");
 		final Element list = item.addChild("list", AxolotlService.PEP_PREFIX);
 		for (Integer id : ids) {
 			final Element device = new Element("device");
@@ -240,6 +249,7 @@ public class IqGenerator extends AbstractGenerator {
 	public IqPacket publishBundles(final SignedPreKeyRecord signedPreKeyRecord, final IdentityKey identityKey,
 	                               final Set<PreKeyRecord> preKeyRecords, final int deviceId, Bundle publishOptions) {
 		final Element item = new Element("item");
+		item.setAttribute("id", "current");
 		final Element bundle = item.addChild("bundle", AxolotlService.PEP_PREFIX);
 		final Element signedPreKeyPublic = bundle.addChild("signedPreKeyPublic");
 		signedPreKeyPublic.setAttribute("signedPreKeyId", signedPreKeyRecord.getId());
@@ -262,6 +272,7 @@ public class IqGenerator extends AbstractGenerator {
 
 	public IqPacket publishVerification(byte[] signature, X509Certificate[] certificates, final int deviceId) {
 		final Element item = new Element("item");
+		item.setAttribute("id", "current");
 		final Element verification = item.addChild("verification", AxolotlService.PEP_PREFIX);
 		final Element chain = verification.addChild("chain");
 		for (int i = 0; i < certificates.length; ++i) {
@@ -279,10 +290,10 @@ public class IqGenerator extends AbstractGenerator {
 
 	public IqPacket queryMessageArchiveManagement(final MessageArchiveService.Query mam) {
 		final IqPacket packet = new IqPacket(IqPacket.TYPE.SET);
-		final Element query = packet.query(mam.isLegacy() ? Namespace.MAM_LEGACY : Namespace.MAM);
+		final Element query = packet.query(mam.version.namespace);
 		query.setAttribute("queryid", mam.getQueryId());
 		final Data data = new Data();
-		data.setFormType(mam.isLegacy() ? Namespace.MAM_LEGACY : Namespace.MAM);
+		data.setFormType(mam.version.namespace);
 		if (mam.muc()) {
 			packet.setTo(mam.getWith());
 		} else if (mam.getWith() != null) {
@@ -356,7 +367,7 @@ public class IqGenerator extends AbstractGenerator {
 		Element query = packet.query("http://jabber.org/protocol/muc#admin");
 		for (Jid jid : jids) {
 			Element item = query.addChild("item");
-			item.setAttribute("jid", jid.toString());
+			item.setAttribute("jid", jid.toEscapedString());
 			item.setAttribute("affiliation", affiliation);
 		}
 		return packet;
@@ -475,8 +486,9 @@ public class IqGenerator extends AbstractGenerator {
 		options.putString("muc#roomconfig_membersonly", "1");
 		options.putString("muc#roomconfig_publicroom", "0");
 		options.putString("muc#roomconfig_whois", "anyone");
-		options.putString("muc#roomconfig_enablearchiving", "1");
-		options.putString("mam", "1");
+		options.putString("muc#roomconfig_enablearchiving", "1"); //prosody
+		options.putString("mam", "1"); //ejabberd community
+		options.putString("muc#roomconfig_mam","1"); //ejabberd saas
 		return options;
 	}
 

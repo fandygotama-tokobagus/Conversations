@@ -1,5 +1,26 @@
 # Changelog
 
+### Version 2.3.0
+* Preview and ask for confirmation before sending media files
+* View per conversation media files in contact and conference details screens
+* Enable foreground service by default for Android 8 (notification can be disabled by long pressing it)
+* Audio player: disable screen and switch to ear piece
+* Support TLSv1.3 (ejabberd ≤ 18.06 is incompatible with openssl 1.1.1 - Update ejabberd or downgrade openssl if you get ›Stream opening error‹)
+
+
+### Version 2.2.9
+* Store bookmarks in PEP if server has ability to convert to old bookmarks
+* Show Jabber IDs from address book in Start Conversation screen
+
+### Version 2.2.8
+* fixed regression that broke XMPP uris
+
+### Version 2.2.7
+* stability improvements
+
+### Version 2.2.6
+* support old MAM version to work with Prosody
+
 ### Version 2.2.5
 * Persist MUC avatar across restarts / show in bookmarks
 * Offer Paste as quote for HTML content

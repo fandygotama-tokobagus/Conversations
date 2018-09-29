@@ -677,19 +677,11 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
 						AlertDialog.Builder builder = new AlertDialog.Builder(this);
 						builder.setTitle(R.string.sync_with_contacts);
 						builder.setMessage(R.string.sync_with_contacts_long);
-						builder.setPositiveButton(R.string.next, (dialog, which) -> {
-							if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-								requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, REQUEST_SYNC_CONTACTS);
-							}
-						});
-						builder.setOnDismissListener(dialog -> {
-							if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-								requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, REQUEST_SYNC_CONTACTS);
-							}
-						});
+						builder.setPositiveButton(R.string.next, (dialog, which) -> requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, REQUEST_SYNC_CONTACTS));
+						builder.setOnDismissListener(dialog -> requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, REQUEST_SYNC_CONTACTS));
 						builder.create().show();
 					} else {
-						requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 0);
+						requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, REQUEST_SYNC_CONTACTS);
 					}
 				}
 			}
@@ -703,6 +695,7 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
 				ScanActivity.onRequestPermissionResult(this, requestCode, grantResults);
 				if (requestCode == REQUEST_SYNC_CONTACTS && xmppConnectionServiceBound) {
 					xmppConnectionService.loadPhoneContacts();
+					xmppConnectionService.startContactObserver();
 				}
 			}
 	}
@@ -858,11 +851,13 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
 
 	protected void filterContacts(String needle) {
 		this.contacts.clear();
-		for (Account account : xmppConnectionService.getAccounts()) {
+		final List<Account> accounts = xmppConnectionService.getAccounts();
+		final boolean singleAccountActive = isSingleAccountActive(accounts);
+		for (Account account : accounts) {
 			if (account.getStatus() != Account.State.DISABLED) {
 				for (Contact contact : account.getRoster().getContacts()) {
 					Presence.Status s = contact.getShownStatus();
-					if (contact.showInRoster() && contact.match(this, needle)
+					if ((contact.showInRoster() || (singleAccountActive && contact.showInPhoneBook())) && contact.match(this, needle)
 							&& (!this.mHideOfflineContacts
 							|| (needle != null && !needle.trim().isEmpty())
 							|| s.compareTo(Presence.Status.OFFLINE) < 0)) {
@@ -873,6 +868,16 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
 		}
 		Collections.sort(this.contacts);
 		mContactsAdapter.notifyDataSetChanged();
+	}
+
+	private static boolean isSingleAccountActive(final List<Account> accounts) {
+		int i = 0;
+		for(Account account : accounts) {
+			if (account.getStatus() != Account.State.DISABLED) {
+				++i;
+			}
+		}
+		return i == 1;
 	}
 
 	protected void filterConferences(String needle) {
@@ -1038,9 +1043,11 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
 				final Contact contact = (Contact) activity.contacts.get(acmi.position);
 				final MenuItem blockUnblockItem = menu.findItem(R.id.context_contact_block_unblock);
 				final MenuItem showContactDetailsItem = menu.findItem(R.id.context_contact_details);
+				final MenuItem deleteContactMenuItem = menu.findItem(R.id.context_delete_contact);
 				if (contact.isSelf()) {
 					showContactDetailsItem.setVisible(false);
 				}
+				deleteContactMenuItem.setVisible(contact.showInRoster());
 				XmppConnection xmpp = contact.getAccount().getXmppConnection();
 				if (xmpp != null && xmpp.getFeatures().blocking() && !contact.isSelf()) {
 					if (contact.isBlocked()) {

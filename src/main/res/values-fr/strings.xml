@@ -20,6 +20,7 @@
   <string name="title_activity_sharewith">Partager avec Conversation</string>
   <string name="title_activity_start_conversation">Démarrer une conversation</string>
   <string name="title_activity_choose_contact">Choisir un contact</string>
+  <string name="title_activity_choose_contacts">Choisir les contacts</string>
   <string name="title_activity_share_via_account">Partager via le compte</string>
   <string name="title_activity_block_list">Bloquer la liste</string>
   <string name="just_now">À l\'instant</string>
@@ -38,7 +39,7 @@
   <string name="visitor">Visiteur</string>
   <string name="remove_contact_text">Voulez-vous supprimer %s de votre liste ? Les conversations associées à ce contact ne seront pas supprimées.</string>
   <string name="block_contact_text">Voulez-vous bloquer %s pour l\'empêcher de vous envoyer des messages ?</string>
-  <string name="unblock_contact_text">Voulez-vous débloquer %s et lui permettre de vous envoyer des messages?</string>
+  <string name="unblock_contact_text">Voulez-vous débloquer %s et lui permettre de vous envoyer des messages ?</string>
   <string name="block_domain_text">Bloquer tous les contacts de %s ?</string>
   <string name="unblock_domain_text">Débloquer tous les contacts de %s ?</string>
   <string name="contact_blocked">Contact bloqué</string>
@@ -70,7 +71,7 @@
   <string name="attach_file">Joindre un fichier</string>
   <string name="not_in_roster">Le contact n\'est pas dans votre carnet d\'adresses. Voulez-vous l\'y ajouter ?</string>
   <string name="add_contact">Ajouter un contact</string>
-  <string name="send_failed">Échec de l\'envoi.</string>
+  <string name="send_failed">Échec de l\'envoi</string>
   <string name="preparing_image">Préparation de l\'image pour envoi...</string>
   <string name="preparing_images">Préparation des images à l\'envoi</string>
   <string name="sharing_files_please_wait">Partage des fichiers. Veuillez patienter...</string>
@@ -104,11 +105,7 @@
   <string name="pref_accept_files">Accepter les fichiers</string>
   <string name="pref_accept_files_summary">Accepter automatiquement les fichiers plus petits que…</string>
   <string name="pref_attachments">Pièces jointes</string>
-  <string name="pref_return_to_previous">Partage rapide</string>
-  <string name="pref_return_to_previous_summary">Ne pas ouvrir la conversation après avoir partagé quelque chose depuis une autre application</string>
   <string name="pref_notification_settings">Notification</string>
-  <string name="pref_notifications">Notifications</string>
-  <string name="pref_notifications_summary">Notifier lors de la réception d\'un message</string>
   <string name="pref_vibrate">Vibration</string>
   <string name="pref_vibrate_summary">Vibrer lors de la réception d\'un message</string>
   <string name="pref_led">Notification LED</string>
@@ -126,6 +123,7 @@
   <string name="openpgp_error">OpenKeychain a signalé une erreur</string>
   <string name="accept">Accepter</string>
   <string name="error">Une erreur s\'est produite</string>
+  <string name="recording_error">Erreur</string>
   <string name="your_account">Votre compte</string>
   <string name="send_presence_updates">Envoyer mes màj de disponibilité</string>
   <string name="receive_presence_updates">Recevoir ses màj de disponibilité</string>
@@ -220,7 +218,7 @@
   <string name="unblock_contact">Débloquer le contact</string>
   <string name="create">Ajouter</string>
   <string name="select">Sélectionner</string>
-  <string name="contact_already_exists">Le contact existe déjà.</string>
+  <string name="contact_already_exists">Le contact existe déjà</string>
   <string name="join">Rejoindre</string>
   <string name="conference_address">Adresse de la conversation de groupe</string>
   <string name="conference_address_example">salle@conference.exemple.com/pseudo</string>
@@ -236,6 +234,7 @@
   <string name="contact_has_read_up_to_this_point">%s a tout lu jusqu\'ici</string>
   <string name="contacts_have_read_up_to_this_point">%s a tout lu jusqu\'ici</string>
   <string name="contacts_and_n_more_have_read_up_to_this_point">%1$s+%2$d et plus  ont tout lu jusqu\'ici</string>
+  <string name="everyone_has_read_up_to_this_point">Tout le monde a lu jusqu\'ici</string>
   <string name="publish">Publier</string>
   <string name="touch_to_choose_picture">Toucher l\'avatar pour choisir une image depuis la galerie.</string>
   <string name="publishing">Mise à jour…</string>
@@ -282,6 +281,7 @@
   <string name="toast_message_omemo_fingerprint">Empreinte OMEMO copiée dans le presse-papier !</string>
   <string name="conference_banned">Vous êtes bannis de cette conversation de groupe</string>
   <string name="conference_members_only">Cette conversation de groupe est réservée aux membres</string>
+  <string name="conference_resource_constraint">Contrainte de ressource</string>
   <string name="conference_kicked">Vous avez été éjecté de cette conversation de groupe</string>
   <string name="conference_shutdown">La discussion de groupe a été interrompue</string>
   <string name="conference_unknown_error">Vous n\'appartenez plus à ce groupe de discussion</string>
@@ -325,6 +325,7 @@
   <string name="file_deleted">Le fichier a été supprimé</string>
   <string name="no_application_found_to_open_file">Aucune application disponible pour ouvrir le fichier</string>
   <string name="no_application_found_to_open_link">Aucune application trouvée pour ouvrir le lien</string>
+  <string name="no_application_found_to_view_contact">Aucune application trouvée pour afficher le contact</string>
   <string name="pref_show_dynamic_tags">Tags dynamiques</string>
   <string name="pref_show_dynamic_tags_summary">Afficher des tags en lecture seule en dessous des contacts.</string>
   <string name="enable_notifications">Activer les notifications</string>
@@ -530,6 +531,7 @@
   <string name="choose_participants">Choisir les participants</string>
   <string name="creating_conference">Création d\'un groupe de discussion...</string>
   <string name="invite_again">Inviter à nouveau</string>
+  <string name="gp_disable">Désactiver</string>
   <string name="gp_short">Courte</string>
   <string name="gp_medium">Moyenne</string>
   <string name="gp_long">Longue</string>
@@ -643,7 +645,6 @@
   <string name="yesterday">Hier</string>
   <string name="pref_validate_hostname">Valider le nom de domaine avec DNSSEC</string>
   <string name="pref_validate_hostname_summary">Les certificats serveur qui comportent le nom de domaine validé sont considérés comme validés</string>
-  <string name="network_is_unreachable">Réseau inaccessible</string>
   <string name="certificate_does_not_contain_jid">Le certificat ne contient pas d\'ID Jabber</string>
   <string name="server_info_partial">partiel</string>
   <string name="attach_record_video">Enregistrer une vidéo</string>
@@ -715,4 +716,24 @@
   <string name="contact_name">Nom du contact</string>
   <string name="nickname">Surnom</string>
   <string name="group_chat_name">Nom</string>
+  <string name="providing_a_name_is_optional">Fournir un nom est facultatif</string>
+  <string name="create_dialog_group_chat_name">Nom de la conversation de groupe</string>
+  <string name="conference_destroyed">Cette conversation de groupe a été supprimée</string>
+  <string name="phone_book">Carnet d\'adresses</string>
+  <string name="unable_to_save_recording">Impossible de sauvegarder l\'enregistrement</string>
+  <string name="foreground_service_channel_name">Service au premier plan</string>
+  <string name="foreground_service_channel_description">Cette catégorie de notification est utilisée pour afficher une notification permanente indiquant que Conversations est en cours.</string>
+  <string name="notification_group_status_information">Information sur l\'état</string>
+  <string name="error_channel_name">Problèmes de connectivité</string>
+  <string name="error_channel_description">Cette catégorie de notification est utilisée pour afficher une notification lors d\'un problème de connexion avec un compte.</string>
+  <string name="notification_group_messages">Messages</string>
+  <string name="messages_channel_name">Messages</string>
+  <string name="silent_messages_channel_name">Messages silencieux</string>
+  <string name="silent_messages_channel_description">Ce groupe de notifications est utilisé pour afficher les notifications qui ne doivent pas émettre de son. Par exemple, lorsque le son est activé sur un autre appareil (délai de grâce).</string>
+  <string name="pref_more_notification_settings">Options de notification</string>
+  <string name="pref_more_notification_settings_summary">Importance, son, vibration</string>
+  <string name="video_compression_channel_name">Compression vidéo</string>
+  <string name="view_media">Voir les média</string>
+  <string name="media_browser">Navigateur de média</string>
+  <string name="export_channel_name">Exportation de l\'historique</string>
 </resources>
