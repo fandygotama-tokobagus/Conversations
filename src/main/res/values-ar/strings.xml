@@ -74,8 +74,6 @@
   <string name="sharing_files_please_wait">جاري إرسال الملفات.  الرجاء الإنتظار ...</string>
   <string name="action_clear_history">حذف سجل المحفوظات</string>
   <string name="clear_conversation_history">حذف سجل المحفوظات للمحادثة</string>
-  <string name="clear_histor_msg">هل ترغب بحذف جميع الرسائل في تلك المحادثة ؟\n\n<b>تنويه :</b> هذا لن يؤثر على الرسائل المخزنة على أجهزة أو خوادم أخرى.</string>
-  <string name="delete_messages">إحذف الرسائل</string>
   <string name="also_end_conversation">قم بإنهاء هذه المحادثة بعد ذلك</string>
   <string name="choose_presence">إختر جهازاً</string>
   <string name="send_unencrypted_message">إرسال رسالة غير مشفرة</string>
@@ -115,7 +113,6 @@
   <string name="pref_confirm_messages">تأكيد الرسالة</string>
   <string name="pref_confirm_messages_summary">دع مراسيلك يعرفون متى قد تلقيت و هل قرئت رسائلهم</string>
   <string name="pref_ui_options">واجهة المستخدم</string>
-  <string name="openpgp_error">لقد قام أوبن كي تشاين بالإبلاغ عن وجود خطأ</string>
   <string name="accept">قبول</string>
   <string name="error">حدث خطأ ما</string>
   <string name="your_account">حسابك</string>
@@ -436,8 +433,6 @@
   <string name="notify_only_when_highlighted">قم بإخطاري عندما يقوم أحدهم بذكري </string>
   <string name="notify_never">تعطيل الإخطارات</string>
   <string name="notify_paused">الإشعارات موقفة</string>
-  <string name="pref_picture_compression">ضغط الصور</string>
-  <string name="pref_picture_compression_summary">تغيير حجم الصور وضغطها</string>
   <string name="always">دائماً</string>
   <string name="automatically">آليا</string>
   <string name="battery_optimizations_enabled">وضع تحسين أداء البطارية مفعّل</string>

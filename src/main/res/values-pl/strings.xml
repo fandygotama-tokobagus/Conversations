@@ -78,7 +78,8 @@
   <string name="action_clear_history">Wyczyść historię</string>
   <string name="clear_conversation_history">Wyczyść historię konwersacji</string>
   <string name="clear_histor_msg">Czy na pewno usunąć wszystkie wiadomości powiązane z konwersacją?\n\n<b>Uwaga:</b> Działanie nie wpływa na wiadomości przechowywane na innych urządzeniach lub serwerach.</string>
-  <string name="delete_messages">Usuń wiadomości</string>
+  <string name="delete_file_dialog">Usuń plik</string>
+  <string name="delete_file_dialog_msg">Czy na pewno usunąć ten plik?\n\n<b>Uwaga:</b> Działanie nie wpływa na kopie pliku przechowywane na innych urządzeniach lub serwerach.</string>
   <string name="also_end_conversation">po czym zakończ tę rozmowę</string>
   <string name="choose_presence">Wybierz urządzenie</string>
   <string name="send_unencrypted_message">Wyślij wiadomość bez szyfrowania</string>
@@ -120,7 +121,6 @@
   <string name="pref_confirm_messages">Potwierdzenia wiadomości</string>
   <string name="pref_confirm_messages_summary">Zezwól na wysyłanie do osób z twojej listy kontaktów informacji o tym, kiedy otrzymałeś i przeczytałeś wiadomość od nich</string>
   <string name="pref_ui_options">UI</string>
-  <string name="openpgp_error">Wystąpił błąd OpenKeychain</string>
   <string name="accept">Akceptuj</string>
   <string name="error">Wystąpił błąd</string>
   <string name="recording_error">Błąd</string>
@@ -152,6 +152,7 @@
   <string name="account_status_policy_violation">Naruszenie zasad</string>
   <string name="account_status_incompatible_server">Serwer niekompatybilny</string>
   <string name="account_status_stream_error">Błąd strumienia</string>
+  <string name="account_status_stream_opening_error">Błąd otwierania strumienia</string>
   <string name="encryption_choice_unencrypted">Bez szyfrowania</string>
   <string name="encryption_choice_otr">OTR</string>
   <string name="encryption_choice_pgp">OpenPGP</string>
@@ -495,7 +496,7 @@
   <string name="notify_only_when_highlighted">Powiadamiaj tylko w przypadku wzmianki o mnie</string>
   <string name="notify_never">Powiadomienia wyłączone</string>
   <string name="notify_paused">Powiadomienia wstrzymane</string>
-  <string name="pref_picture_compression">Kompresuj obrazki</string>
+  <string name="pref_picture_compression">Kompresja obrazów</string>
   <string name="pref_picture_compression_summary">Zmień rozmiar i kompresuj obrazki</string>
   <string name="always">Zawsze</string>
   <string name="automatically">Automatycznie</string>
@@ -563,6 +564,7 @@ Dla twojej wygody ułatwiliśmy stworzenie konta na conversations.im; serwerze d
   <string name="allow">Pozwól</string>
   <string name="no_permission_to_access_x">Brak pozwolenia na dostęp do %s</string>
   <string name="remote_server_not_found">Nie znaleziono serwera</string>
+  <string name="remote_server_timeout">Brak odpowiedzi od zdalnego serwera</string>
   <string name="unable_to_update_account">Nie można zaktualizować konta</string>
   <string name="report_jid_as_spammer">Raportuj ten JID jako rozsyłający spam</string>
   <string name="pref_delete_omemo_identities">Usuń tożsamości OMEMO</string>
@@ -755,4 +757,10 @@ Administrator twojego serwera będzie mógł czytać twoje wiadomości, ale moż
   <string name="view_media">Pokaż media</string>
   <string name="media_browser">Przeglądarka mediów</string>
   <string name="export_channel_name">Eksport historii</string>
+  <string name="security_violation_not_attaching_file">Plik pominięty w związku z naruszeniem bezpieczeństwa.</string>
+  <string name="pref_video_compression">Jakość wideo</string>
+  <string name="pref_video_compression_summary">Niższa jakość gwarantuje mniejszy rozmiar</string>
+  <string name="video_360p">Średnia (360p)</string>
+  <string name="video_720p">Wysoka (720p)</string>
+  <string name="cancelled">anulowane</string>
 </resources>

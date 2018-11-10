@@ -77,8 +77,6 @@
   <string name="sharing_files_please_wait">S\'estan compartint els fitxers. Espereu...</string>
   <string name="action_clear_history">Neteja l\'historial</string>
   <string name="clear_conversation_history">Neteja l\'historial de la conversa</string>
-  <string name="clear_histor_msg">Voleu esborrar tots els missatges d\'aquesta conversa?\n\n<b>Avís:</b> Això no afectarà els missatges desats en altres dispositius o servidors.</string>
-  <string name="delete_messages">Esborra els missatges</string>
   <string name="also_end_conversation">Finalitza aquesta conversa després</string>
   <string name="choose_presence">Tria el dispositiu</string>
   <string name="send_unencrypted_message">Envia un missatge no xifrat</string>
@@ -120,7 +118,6 @@
   <string name="pref_confirm_messages">Confirma els missatges</string>
   <string name="pref_confirm_messages_summary">Feu saber als vostres contactes quan heu rebut i llegit els seus missatges</string>
   <string name="pref_ui_options">UI</string>
-  <string name="openpgp_error">L\'OpenKeychain ha informat d\'un error</string>
   <string name="accept">Accepta</string>
   <string name="error">S\'ha produït un error</string>
   <string name="your_account">El vostre compte</string>
@@ -497,8 +494,6 @@ concediu permís per accedir als teus contactes.</string>
   <string name="notify_only_when_highlighted">Notifica només quan s\'esmenta</string>
   <string name="notify_never">S\'han desactivat les notificacions</string>
   <string name="notify_paused">S\'han pausat les notificacions</string>
-  <string name="pref_picture_compression">Comprimeix imatges</string>
-  <string name="pref_picture_compression_summary">Canviar la mida i comprimir imatges</string>
   <string name="always">Sempre</string>
   <string name="automatically">Automàticament</string>
   <string name="battery_optimizations_enabled">Optimitzacions de la bateria habilitades</string>

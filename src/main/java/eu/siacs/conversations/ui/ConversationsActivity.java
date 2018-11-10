@@ -92,6 +92,7 @@ public class ConversationsActivity extends XmppActivity implements OnConversatio
     public static final String EXTRA_AS_QUOTE = "as_quote";
     public static final String EXTRA_NICK = "nick";
     public static final String EXTRA_IS_PRIVATE_MESSAGE = "pm";
+    public static final String EXTRA_DO_NOT_APPEND = "do_not_append";
 
     private static List<String> VIEW_AND_SHARE_ACTIONS = Arrays.asList(
             ACTION_VIEW_CONVERSATION,
@@ -220,7 +221,7 @@ public class ConversationsActivity extends XmppActivity implements OnConversatio
             return;
         }
         final Fragment fragment = getFragmentManager().findFragmentById(R.id.main_fragment);
-        if (fragment != null && fragment instanceof ConversationsOverviewFragment) {
+        if (fragment instanceof ConversationsOverviewFragment) {
             if (ExceptionHelper.checkForCrash(this)) {
                 return;
             }
@@ -272,14 +273,14 @@ public class ConversationsActivity extends XmppActivity implements OnConversatio
 
     private void notifyFragmentOfBackendConnected(@IdRes int id) {
         final Fragment fragment = getFragmentManager().findFragmentById(id);
-        if (fragment != null && fragment instanceof OnBackendConnected) {
+        if (fragment instanceof OnBackendConnected) {
             ((OnBackendConnected) fragment).onBackendConnected();
         }
     }
 
     private void refreshFragment(@IdRes int id) {
         final Fragment fragment = getFragmentManager().findFragmentById(id);
-        if (fragment != null && fragment instanceof XmppFragment) {
+        if (fragment instanceof XmppFragment) {
             ((XmppFragment) fragment).refresh();
         }
     }
@@ -461,7 +462,7 @@ public class ConversationsActivity extends XmppActivity implements OnConversatio
         if (conversationFragment == null) {
             mainNeedsRefresh = false;
             Fragment mainFragment = getFragmentManager().findFragmentById(R.id.main_fragment);
-            if (mainFragment != null && mainFragment instanceof ConversationFragment) {
+            if (mainFragment instanceof ConversationFragment) {
                 conversationFragment = (ConversationFragment) mainFragment;
             } else {
                 conversationFragment = new ConversationFragment();
@@ -585,7 +586,7 @@ public class ConversationsActivity extends XmppActivity implements OnConversatio
                     return;
                 }
             } else {
-                if (secondaryFragment != null && secondaryFragment instanceof ConversationFragment) {
+                if (secondaryFragment instanceof ConversationFragment) {
                     transaction.remove(secondaryFragment);
                     transaction.commit();
                     getFragmentManager().executePendingTransactions();
@@ -609,7 +610,7 @@ public class ConversationsActivity extends XmppActivity implements OnConversatio
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             Fragment mainFragment = getFragmentManager().findFragmentById(R.id.main_fragment);
-            if (mainFragment != null && mainFragment instanceof ConversationFragment) {
+            if (mainFragment instanceof ConversationFragment) {
                 final Conversation conversation = ((ConversationFragment) mainFragment).getConversation();
                 if (conversation != null) {
                     actionBar.setTitle(EmojiWrapper.transform(conversation.getName()));
@@ -628,7 +629,7 @@ public class ConversationsActivity extends XmppActivity implements OnConversatio
             return;
         }
         Fragment mainFragment = getFragmentManager().findFragmentById(R.id.main_fragment);
-        if (mainFragment != null && mainFragment instanceof ConversationFragment) {
+        if (mainFragment instanceof ConversationFragment) {
             try {
                 getFragmentManager().popBackStack();
             } catch (IllegalStateException e) {
@@ -638,7 +639,7 @@ public class ConversationsActivity extends XmppActivity implements OnConversatio
             return;
         }
         Fragment secondaryFragment = getFragmentManager().findFragmentById(R.id.secondary_fragment);
-        if (secondaryFragment != null && secondaryFragment instanceof ConversationFragment) {
+        if (secondaryFragment instanceof ConversationFragment) {
             if (((ConversationFragment) secondaryFragment).getConversation() == conversation) {
                 Conversation suggestion = ConversationsOverviewFragment.getSuggestion(this, conversation);
                 if (suggestion != null) {
@@ -651,7 +652,7 @@ public class ConversationsActivity extends XmppActivity implements OnConversatio
     @Override
     public void onConversationsListItemUpdated() {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.main_fragment);
-        if (fragment != null && fragment instanceof ConversationsOverviewFragment) {
+        if (fragment instanceof ConversationsOverviewFragment) {
             ((ConversationsOverviewFragment) fragment).refresh();
         }
     }

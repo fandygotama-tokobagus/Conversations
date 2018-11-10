@@ -116,7 +116,6 @@ import eu.siacs.conversations.utils.CryptoHelper;
 import eu.siacs.conversations.utils.ExceptionHelper;
 import eu.siacs.conversations.utils.MimeUtils;
 import eu.siacs.conversations.utils.OnPhoneContactsLoadedListener;
-import eu.siacs.conversations.utils.PRNGFixes;
 import eu.siacs.conversations.utils.PhoneHelper;
 import eu.siacs.conversations.utils.QuickLoader;
 import eu.siacs.conversations.utils.ReplacingSerialSingleThreadExecutor;
@@ -471,11 +470,6 @@ public class XmppConnectionService extends Service {
     }
 
     public void attachFileToConversation(final Conversation conversation, final Uri uri, final String type, final UiCallback<Message> callback) {
-        if (FileBackend.weOwnFile(this, uri)) {
-            Log.d(Config.LOGTAG, "trying to attach file that belonged to us");
-            callback.error(R.string.security_error_invalid_file_access, null);
-            return;
-        }
         final Message message;
         if (conversation.getNextEncryption() == Message.ENCRYPTION_PGP) {
             message = new Message(conversation, "", Message.ENCRYPTION_DECRYPTED);
@@ -493,12 +487,6 @@ public class XmppConnectionService extends Service {
     }
 
     public void attachImageToConversation(final Conversation conversation, final Uri uri, final UiCallback<Message> callback) {
-        if (FileBackend.weOwnFile(this, uri)) {
-            Log.d(Config.LOGTAG, "trying to attach file that belonged to us");
-            callback.error(R.string.security_error_invalid_file_access, null);
-            return;
-        }
-
         final String mimeType = MimeUtils.guessMimeTypeFromUri(this, uri);
         final String compressPictures = getCompressPicturesPreference();
 
@@ -958,7 +946,11 @@ public class XmppConnectionService extends Service {
     public void onCreate() {
         OmemoSetting.load(this);
         ExceptionHelper.init(getApplicationContext());
-        Security.insertProviderAt(Conscrypt.newProvider(), 1);
+        try {
+            Security.insertProviderAt(Conscrypt.newProvider(), 1);
+        } catch (Throwable throwable) {
+            Log.e(Config.LOGTAG,"unable to initialize security provider", throwable);
+        }
         Resolver.init(this);
         this.mRandom = new SecureRandom();
         updateMemorizingTrustmanager();
@@ -1018,7 +1010,7 @@ public class XmppConnectionService extends Service {
         }
 
         this.pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        this.wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "XmppConnectionService");
+        this.wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Conversations:Service");
 
         toggleForegroundService();
         updateUnreadCountBadge();
@@ -1679,9 +1671,8 @@ public class XmppConnectionService extends Service {
 	public List<Conversation> findAllConferencesWith(Contact contact) {
 		ArrayList<Conversation> results = new ArrayList<>();
 		for (final Conversation c : conversations) {
-			if (c.getMode() == Conversation.MODE_MULTI
-					&& (c.getJid().asBareJid().equals(c.getJid().asBareJid()) || c.getMucOptions().isContactInRoom(contact))) {
-				results.add(c);
+			if (c.getMode() == Conversation.MODE_MULTI && c.getMucOptions().isContactInRoom(contact)) {
+			    results.add(c);
 			}
 		}
 		return results;

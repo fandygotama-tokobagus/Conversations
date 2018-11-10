@@ -77,8 +77,9 @@
   <string name="sharing_files_please_wait">Teile Dateien. Bitte warten…</string>
   <string name="action_clear_history">Verlauf löschen</string>
   <string name="clear_conversation_history">Unterhaltungsverlauf löschen</string>
-  <string name="clear_histor_msg">Möchtest du alle Nachrichten in dieser Unterhaltung löschen?\n\n<b>Achtung:</b> Dies beeinflusst nicht Nachrichten, die auf anderen Geräten oder Servern gespeichert sind.</string>
-  <string name="delete_messages">Nachrichten löschen</string>
+  <string name="clear_histor_msg">Bist du sicher, dass du alle Nachrichten in dieser Unterhaltung löschen möchtest?\n\n<b>Achtung:</b> Dies löscht keine Kopien der Nachrichten, die auf anderen Geräten oder Servern gespeichert sind.</string>
+  <string name="delete_file_dialog">Datei löschen</string>
+  <string name="delete_file_dialog_msg">Bist du sicher, dass du diese Datei löschen möchtest?\n\n<b>Achtung:</b> Dies löscht keine Kopien dieser Datei, die auf anderen Geräten oder Servern gespeichert sind.</string>
   <string name="also_end_conversation">Diese Unterhaltung danach beenden</string>
   <string name="choose_presence">Gerät auswählen</string>
   <string name="send_unencrypted_message">Unverschlüsselt schreiben…</string>
@@ -120,7 +121,6 @@
   <string name="pref_confirm_messages">Lese- und Empfangsbestätigung senden</string>
   <string name="pref_confirm_messages_summary">Informiere deine Kontakte, wenn du eine Nachricht empfangen und gelesen hast</string>
   <string name="pref_ui_options">Benutzeroberfläche</string>
-  <string name="openpgp_error">Fehler mit OpenKeychain</string>
   <string name="accept">Annehmen</string>
   <string name="error">Ein Fehler ist aufgetreten</string>
   <string name="recording_error">Fehler</string>
@@ -151,7 +151,8 @@
   <string name="account_status_tls_error">TLS-Aushandlung fehlgeschlagen</string>
   <string name="account_status_policy_violation">Verstoß gegen die Richtlinien</string>
   <string name="account_status_incompatible_server">Inkompatibler Server</string>
-  <string name="account_status_stream_error">Datenstromfehler</string>
+  <string name="account_status_stream_error">Stream Fehler</string>
+  <string name="account_status_stream_opening_error">Fehler beim Öffnen des Streams</string>
   <string name="encryption_choice_unencrypted">Unverschlüsselt</string>
   <string name="encryption_choice_otr">OTR</string>
   <string name="encryption_choice_pgp">OpenPGP</string>
@@ -492,7 +493,7 @@
   <string name="notify_never">Benachrichtigungen deaktiviert</string>
   <string name="notify_paused">Benachrichtigungen pausiert</string>
   <string name="pref_picture_compression">Bilder komprimieren</string>
-  <string name="pref_picture_compression_summary">Bildgröße anpassen und komprimieren</string>
+  <string name="pref_picture_compression_summary">Bildgröße ändern und komprimieren</string>
   <string name="always">Immer</string>
   <string name="automatically">Automatisch</string>
   <string name="battery_optimizations_enabled">Batterieoptimierung aktiv</string>
@@ -558,6 +559,7 @@
   <string name="allow">Erlauben</string>
   <string name="no_permission_to_access_x">Keine Berechtigung um auf %s zuzugreifen</string>
   <string name="remote_server_not_found">Remote-Server nicht gefunden</string>
+  <string name="remote_server_timeout">Zeitüberschreitung des Remote-Servers</string>
   <string name="unable_to_update_account">Konto kann nicht aktualisiert werden</string>
   <string name="report_jid_as_spammer">Melde die JID als Sender unerwünschter Nachrichten.</string>
   <string name="pref_delete_omemo_identities">OMEMO-Identitäten zurücksetzen</string>
@@ -736,4 +738,10 @@
   <string name="view_media">Medien anzeigen</string>
   <string name="media_browser">Medienbrowser</string>
   <string name="export_channel_name">Verlauf exportieren</string>
+  <string name="security_violation_not_attaching_file">Die Datei wurde aufgrund von Sicherheitsverletzungen ausgelassen.</string>
+  <string name="pref_video_compression">Videoqualität</string>
+  <string name="pref_video_compression_summary">Geringere Qualität ermöglicht kleinere Dateien</string>
+  <string name="video_360p">Mittel (360p)</string>
+  <string name="video_720p">Hoch (720p)</string>
+  <string name="cancelled">abgebrochen</string>
 </resources>

@@ -6,7 +6,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0'
+        classpath 'com.android.tools.build:gradle:3.2.1'
     }
 }
 
@@ -33,9 +33,13 @@ dependencies {
         exclude group: 'com.google.firebase', module: 'firebase-core'
     }
     implementation 'org.sufficientlysecure:openpgp-api:10.0'
-    implementation 'com.theartofdev.edmodo:android-image-cropper:2.7.0'
+    implementation ('com.theartofdev.edmodo:android-image-cropper:2.7.+') {
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'exifinterface'
+    }
     implementation "com.android.support:support-v13:$supportLibVersion"
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
+    implementation "com.android.support:exifinterface:$supportLibVersion"
     implementation "com.android.support:cardview-v7:$supportLibVersion"
     compatImplementation "com.android.support:support-emoji-appcompat:$supportLibVersion"
     implementation "com.android.support:support-emoji:$supportLibVersion"
@@ -66,8 +70,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 290
-        versionName "2.3.0"
+        versionCode 297
+        versionName "2.3.5"
         archivesBaseName += "-$versionName"
         applicationId "eu.siacs.conversations"
         resValue "string", "applicationId", applicationId

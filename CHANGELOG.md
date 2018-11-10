@@ -1,5 +1,27 @@
 # Changelog
 
+### Version 2.3.5
+* Fixed group chat mentions when nick ends in . (dot)
+* Fixed Conversations not asking for permissions after direct share
+* Fixed CVE-2018-18467
+
+### Version 2.3.4
+* Fixed sending OMEMO files to ChatSecure
+
+### Version 2.3.3
+* Fixed connection issues with user@ip type JIDs
+
+### Version 2.3.2
+* Fixed OMEMO on Android 5.1 & 6.0
+* Added setting for video quality
+* bug fixes
+
+### Version 2.3.1
+* Stronger compression for video files
+* Use SNI on STARTTLS to fix gtalk
+* Fix Quite Hours on Android 8+
+* Use Consistent Color Generation (XEP-0392)
+
 ### Version 2.3.0
 * Preview and ask for confirmation before sending media files
 * View per conversation media files in contact and conference details screens

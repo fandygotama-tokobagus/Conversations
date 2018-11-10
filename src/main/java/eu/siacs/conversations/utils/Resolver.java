@@ -68,7 +68,21 @@ public class Resolver {
         }
     }
 
+    public static List<Result> fromHardCoded(String hostname, int port) {
+        Result result = new Result();
+        result.hostname = DNSName.from(hostname);
+        result.port = port;
+        result.directTls = port == 443 || port == 5223;
+        result.authenticated = true;
+        return Collections.singletonList(result);
+    }
+
+
     public static List<Result> resolve(String domain) {
+        final  List<Result> ipResults = fromIpAddress(domain);
+        if (ipResults.size() > 0) {
+            return ipResults;
+        }
         final List<Result> results = new ArrayList<>();
         final List<Result> fallbackResults = new ArrayList<>();
         Thread[] threads = new Thread[3];
@@ -120,9 +134,23 @@ public class Resolver {
                 }
             }
         } catch (InterruptedException e) {
-            for(Thread thread : threads) {
+            for (Thread thread : threads) {
                 thread.interrupt();
             }
+            return Collections.emptyList();
+        }
+    }
+
+    private static List<Result> fromIpAddress(String domain) {
+        if (!IP.matches(domain)) {
+            return Collections.emptyList();
+        }
+        try {
+            Result result = new Result();
+            result.ip = InetAddress.getByName(domain);
+            result.port = 5222;
+            return Collections.singletonList(result);
+        } catch (UnknownHostException e) {
             return Collections.emptyList();
         }
     }
@@ -273,7 +301,8 @@ public class Resolver {
             } catch (UnknownHostException e) {
                 result.ip = null;
             }
-            result.hostname = DNSName.from(cursor.getString(cursor.getColumnIndex(HOSTNAME)));
+            final String hostname = cursor.getString(cursor.getColumnIndex(HOSTNAME));
+            result.hostname = hostname == null ? null : DNSName.from(hostname);
             result.port = cursor.getInt(cursor.getColumnIndex(PORT));
             result.priority = cursor.getInt(cursor.getColumnIndex(PRIORITY));
             result.authenticated = cursor.getInt(cursor.getColumnIndex(AUTHENTICATED)) > 0;
@@ -365,7 +394,7 @@ public class Resolver {
         public ContentValues toContentValues() {
             final ContentValues contentValues = new ContentValues();
             contentValues.put(IP, ip == null ? null : ip.getAddress());
-            contentValues.put(HOSTNAME, hostname.toString());
+            contentValues.put(HOSTNAME, hostname == null ? null : hostname.toString());
             contentValues.put(PORT, port);
             contentValues.put(PRIORITY, priority);
             contentValues.put(DIRECT_TLS, directTls ? 1 : 0);

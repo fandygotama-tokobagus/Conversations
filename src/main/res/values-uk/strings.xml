@@ -68,8 +68,6 @@
   <string name="sharing_files_please_wait">Поширюю файли. Зачекайте, будь ласка…</string>
   <string name="action_clear_history">Очистити історію</string>
   <string name="clear_conversation_history">Очистити історію розмов</string>
-  <string name="clear_histor_msg">Бажаєте видалити всі повідомлення з цієї розмови?\n\n<b>Увага:</b> Це не вплине на повідомлення, які знаходяться на інших пристроях або серверах.</string>
-  <string name="delete_messages">Видалити повідомлення</string>
   <string name="also_end_conversation">Завершити цю розмову опісля</string>
   <string name="choose_presence">Вибрати пристрій</string>
   <string name="send_unencrypted_message">Відправити незашифроване повідомлення</string>
@@ -111,7 +109,6 @@
   <string name="pref_confirm_messages">Повідомлення-підтвердження</string>
   <string name="pref_confirm_messages_summary">Дайте знати вашим контактам, коли ви отримали й прочитали повідомлення</string>
   <string name="pref_ui_options">Інтерфейс користувача</string>
-  <string name="openpgp_error">OpenKeychain відзвітував про помилку</string>
   <string name="accept">Прийняти</string>
   <string name="error">Сталася помилка</string>
   <string name="your_account">Ваш обліковий запис</string>
@@ -435,8 +432,6 @@
   <string name="notify_only_when_highlighted">Повідомляти, лише якщо згадують</string>
   <string name="notify_never">Сповіщення вимкнено</string>
   <string name="notify_paused">Сповіщення призупинено</string>
-  <string name="pref_picture_compression">Стискати зображення</string>
-  <string name="pref_picture_compression_summary">Змінювати розмір та стискати зображення</string>
   <string name="always">Завжди</string>
   <string name="automatically">Автоматично</string>
   <string name="battery_optimizations_enabled">Оптимізацію батареї задіяно</string>

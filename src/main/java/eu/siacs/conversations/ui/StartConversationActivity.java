@@ -71,6 +71,7 @@ import eu.siacs.conversations.services.XmppConnectionService.OnRosterUpdate;
 import eu.siacs.conversations.ui.adapter.ListItemAdapter;
 import eu.siacs.conversations.ui.interfaces.OnBackendConnected;
 import eu.siacs.conversations.ui.service.EmojiService;
+import eu.siacs.conversations.ui.util.JidDialog;
 import eu.siacs.conversations.ui.util.MenuDoubleTabUtil;
 import eu.siacs.conversations.ui.util.PendingItem;
 import eu.siacs.conversations.ui.util.SoftKeyboardUtils;
@@ -427,7 +428,7 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setNegativeButton(R.string.cancel, null);
 		builder.setTitle(R.string.action_delete_contact);
-		builder.setMessage(getString(R.string.remove_contact_text, contact.getJid()));
+		builder.setMessage(JidDialog.style(this, R.string.remove_contact_text, contact.getJid().toEscapedString()));
 		builder.setPositiveButton(R.string.delete, (dialog, which) -> {
 			xmppConnectionService.deleteContactOnServer(contact);
 			filter(mSearchEditText.getText().toString());
@@ -442,8 +443,7 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setNegativeButton(R.string.cancel, null);
 		builder.setTitle(R.string.delete_bookmark);
-		builder.setMessage(getString(R.string.remove_bookmark_text,
-				bookmark.getJid()));
+		builder.setMessage(JidDialog.style(this, R.string.remove_bookmark_text, bookmark.getJid().toEscapedString()));
 		builder.setPositiveButton(R.string.delete, (dialog, which) -> {
 			bookmark.setConversation(null);
 			Account account = bookmark.getAccount();
@@ -487,7 +487,7 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
 				contact.setServerName(invite.getName());
 			}
 			if (contact.isSelf()) {
-				switchToConversation(contact, null);
+				switchToConversation(contact);
 				return true;
 			} else if (contact.showInRoster()) {
 				throw new EnterJidDialog.JidError(getString(R.string.contact_already_exists));
@@ -496,7 +496,7 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
 				if (invite != null && invite.hasFingerprints()) {
 					xmppConnectionService.verifyFingerprints(contact, invite.getFingerprints());
 				}
-				switchToConversation(contact, invite == null ? null : invite.getBody());
+				switchToConversationDoNotAppend(contact, invite == null ? null : invite.getBody());
 				return true;
 			}
 		});
@@ -543,11 +543,14 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
 		return xmppConnectionService.findAccountByJid(jid);
 	}
 
-	protected void switchToConversation(Contact contact, String body) {
-		Conversation conversation = xmppConnectionService
-				.findOrCreateConversation(contact.getAccount(),
-						contact.getJid(), false, true);
-		switchToConversation(conversation, body, false);
+	protected void switchToConversation(Contact contact) {
+		Conversation conversation = xmppConnectionService.findOrCreateConversation(contact.getAccount(), contact.getJid(), false, true);
+		switchToConversation(conversation);
+	}
+
+	protected void switchToConversationDoNotAppend(Contact contact, String body) {
+		Conversation conversation = xmppConnectionService.findOrCreateConversation(contact.getAccount(), contact.getJid(), false, true);
+		switchToConversationDoNotAppend(conversation, body);
 	}
 
 	@Override
@@ -777,7 +780,7 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
 		if (invite.isAction(XmppUri.ACTION_JOIN)) {
 			Conversation muc = xmppConnectionService.findFirstMuc(invite.getJid());
 			if (muc != null) {
-				switchToConversation(muc, invite.getBody(), false);
+				switchToConversationDoNotAppend(muc, invite.getBody());
 				return true;
 			} else {
 				showJoinConferenceDialog(invite.getJid().asBareJid().toString());
@@ -799,7 +802,7 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
 				if (invite.account != null) {
 					xmppConnectionService.getShortcutService().report(contact);
 				}
-				switchToConversation(contact, invite.getBody());
+				switchToConversationDoNotAppend(contact, invite.getBody());
 			}
 			return true;
 		} else {
@@ -821,19 +824,13 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
 		View view = getLayoutInflater().inflate(R.layout.dialog_verify_fingerprints, null);
 		final CheckBox isTrustedSource = view.findViewById(R.id.trusted_source);
 		TextView warning = view.findViewById(R.id.warning);
-		String jid = contact.getJid().asBareJid().toString();
-		SpannableString spannable = new SpannableString(getString(R.string.verifying_omemo_keys_trusted_source, jid, contact.getDisplayName()));
-		int start = spannable.toString().indexOf(jid);
-		if (start >= 0) {
-			spannable.setSpan(new TypefaceSpan("monospace"), start, start + jid.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-		}
-		warning.setText(spannable);
+		warning.setText(JidDialog.style(this, R.string.verifying_omemo_keys_trusted_source, contact.getJid().asBareJid().toEscapedString(), contact.getDisplayName()));
 		builder.setView(view);
 		builder.setPositiveButton(R.string.confirm, (dialog, which) -> {
 			if (isTrustedSource.isChecked() && invite.hasFingerprints()) {
 				xmppConnectionService.verifyFingerprints(contact, invite.getFingerprints());
 			}
-			switchToConversation(contact, invite.getBody());
+			switchToConversationDoNotAppend(contact, invite.getBody());
 		});
 		builder.setNegativeButton(R.string.cancel, (dialog, which) -> StartConversationActivity.this.finish());
 		AlertDialog dialog = builder.create();
@@ -1110,13 +1107,13 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
 
 		@Override
 		public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-			assert (0 <= position && position < fragments.length);
 			FragmentTransaction trans = fragmentManager.beginTransaction();
 			trans.remove(fragments[position]);
 			trans.commit();
 			fragments[position] = null;
 		}
 
+		@NonNull
 		@Override
 		public Fragment instantiateItem(@NonNull ViewGroup container, int position) {
 			Fragment fragment = getItem(position);
@@ -1149,8 +1146,7 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
 			}
 		}
 
-		public Fragment getItem(int position) {
-			assert (0 <= position && position < fragments.length);
+		Fragment getItem(int position) {
 			if (fragments[position] == null) {
 				final MyListFragment listFragment = new MyListFragment();
 				if (position == 1) {

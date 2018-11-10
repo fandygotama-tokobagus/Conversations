@@ -77,8 +77,9 @@
   <string name="sharing_files_please_wait">Bestanden delen. Even geduld…</string>
   <string name="action_clear_history">Geschiedenis wissen</string>
   <string name="clear_conversation_history">Gespreksgeschiedenis wissen</string>
-  <string name="clear_histor_msg">Wil je alle berichten in dit gesprek verwijderen?\n\n<b>Waarschuwing:</b> Dit zal geen invloed hebben op de berichten opgeslagen op andere apparaten of servers.</string>
-  <string name="delete_messages">Berichten verwijderen</string>
+  <string name="clear_histor_msg">Weet je zeker dat je alle berichten in dit gesprek wil verwijderen?\n\n<b>Waarschuwing:</b> Dit zal kopieën van deze berichten die opgeslagen zijn op andere apparaten of servers niet verwijderen.</string>
+  <string name="delete_file_dialog">Bestand verwijderen</string>
+  <string name="delete_file_dialog_msg">Weet je zeker dat je dit bestand wil verwijderen?\n\n<b>Waarschuwing:</b> Dit zal kopieën van dit bericht die opgeslagen zijn op andere apparaten of servers niet verwijderen.</string>
   <string name="also_end_conversation">Dit gesprek na afloop beëindigen</string>
   <string name="choose_presence">Apparaat kiezen</string>
   <string name="send_unencrypted_message">Verstuur onversleuteld bericht</string>
@@ -120,7 +121,8 @@
   <string name="pref_confirm_messages">Bevestig berichten</string>
   <string name="pref_confirm_messages_summary">Laat je contacten weten wanneer je hun berichten ontvangen en gelezen hebt</string>
   <string name="pref_ui_options">Gebruikersomgeving</string>
-  <string name="openpgp_error">OpenKeychain rapporteerde een fout</string>
+  <string name="openpgp_error">OpenKeychain rapporteerde een fout.</string>
+  <string name="bad_key_for_encryption">Slechte versleutelingsleutel.</string>
   <string name="accept">Aanvaarden</string>
   <string name="error">Er is een fout opgetreden</string>
   <string name="recording_error">Fout</string>
@@ -152,6 +154,7 @@
   <string name="account_status_policy_violation">Beleidsschending</string>
   <string name="account_status_incompatible_server">Incompatibele server</string>
   <string name="account_status_stream_error">Fout bij stream</string>
+  <string name="account_status_stream_opening_error">Fout bij openen van stream</string>
   <string name="encryption_choice_unencrypted">Onversleuteld</string>
   <string name="encryption_choice_otr">OTR</string>
   <string name="encryption_choice_pgp">OpenPGP</string>
@@ -491,8 +494,8 @@
   <string name="notify_only_when_highlighted">Melding enkel wanneer aangesproken</string>
   <string name="notify_never">Meldingen uitgeschakeld</string>
   <string name="notify_paused">Meldingen gepauzeerd</string>
-  <string name="pref_picture_compression">Afbeeldingen comprimeren</string>
-  <string name="pref_picture_compression_summary">Verklein en comprimeer afbeeldingen</string>
+  <string name="pref_picture_compression">Afbeeldingscompressie</string>
+  <string name="pref_picture_compression_summary">Afbeeldingen verkleinen en comprimeren</string>
   <string name="always">Altijd</string>
   <string name="automatically">Automatisch</string>
   <string name="battery_optimizations_enabled">Batterij-optimalisaties ingeschakeld</string>
@@ -558,6 +561,7 @@
   <string name="allow">Toestaan</string>
   <string name="no_permission_to_access_x">Geen toestemming om toegang te krijgen tot %s</string>
   <string name="remote_server_not_found">Externe server niet gevonden</string>
+  <string name="remote_server_timeout">Time-out bij externe server</string>
   <string name="unable_to_update_account">Kan account niet bijwerken</string>
   <string name="report_jid_as_spammer">Rapporteer deze JID voor het sturen van ongewenste berichten</string>
   <string name="pref_delete_omemo_identities">OMEMO-identiteiten verwijderen</string>
@@ -736,4 +740,11 @@
   <string name="view_media">Media bekijken</string>
   <string name="media_browser">Mediabrowser</string>
   <string name="export_channel_name">Geschiedenis exporteren</string>
+  <string name="security_violation_not_attaching_file">Bestand weggelaten wegens beveiligingsovertreding.</string>
+  <string name="pref_video_compression">Videokwaliteit</string>
+  <string name="pref_video_compression_summary">Een lagere kwaliteit zorgt voor kleinere bestanden</string>
+  <string name="video_360p">Gemiddeld (360p)</string>
+  <string name="video_720p">Hoog (720p)</string>
+  <string name="cancelled">geannuleerd</string>
+  <string name="already_drafting_message">Je bent al een bericht aan het opstellen.</string>
 </resources>
